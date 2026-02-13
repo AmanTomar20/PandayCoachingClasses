@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Assessment, Submission } from '../../types';
 import { Card } from '../UI/Card';
 
@@ -14,7 +14,6 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [isFinished, setIsFinished] = useState(false);
-  const [startTime] = useState(Date.now());
 
   const currentQuestion = assessment.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === assessment.questions.length - 1;

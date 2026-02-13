@@ -10,7 +10,6 @@ import { Card } from './components/UI/Card';
 const App: React.FC = () => {
   const [currentUser, setCurrentUser] = useState<User | null>(storageService.getCurrentUser());
   const [assessments, setAssessments] = useState<Assessment[]>([]);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
     // Initialize assessments from storage

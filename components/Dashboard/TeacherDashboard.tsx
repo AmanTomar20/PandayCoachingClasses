@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Assessment, User, Submission } from '../../types';
+import { Assessment, User } from '../../types';
 import { Card } from '../UI/Card';
 import { MOCK_STUDENTS } from '../../constants';
 import { storageService } from '../../services/storageService';
