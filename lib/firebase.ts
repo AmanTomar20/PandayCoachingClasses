@@ -1,4 +1,5 @@
 // Standard modular Firebase imports for v9+
+// Fix: Use a standard modular import for initializeApp which is the correct named export in Firebase v9+
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 

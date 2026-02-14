@@ -35,25 +35,29 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
     setIsAiLoading(true);
     setAiExplanation(null);
     try {
-      // Create a new instance right before the call to ensure up-to-date API key
+      // Fix: Create a new instance right before the call to ensure up-to-date API key
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const prompt = `You are an expert tutor for Panday Classes. 
-      The student got this question wrong: "${question.text}"
-      The correct answer is: "${question.options.find(o => o.id === question.correctOptionId)?.text}".
-      The student chose: "${question.options.find(o => o.id === responses[question.id])?.text}".
-      Provide a deep, reassuring, and logical explanation (max 100 words) of why the correct answer is right and why the student's choice was incorrect.`;
+      
+      const userChoice = question.options.find(o => o.id === responses[question.id])?.text || "None";
+      const correctChoice = question.options.find(o => o.id === question.correctOptionId)?.text;
+      
+      const prompt = `The student got this question wrong: "${question.text}"
+      The correct answer is: "${correctChoice}".
+      The student chose: "${userChoice}".
+      Provide a deep, reassuring, and logical explanation of why the correct answer is right and why the student's choice was incorrect.`;
 
-      // Use generateContent with both model name and prompt
+      // Fix: Use systemInstruction for persona and set maxOutputTokens with thinkingBudget together
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: prompt,
         config: {
-          // Guidelines: Always set maxOutputTokens and thinkingBudget together
-          maxOutputTokens: 4096,
-          thinkingConfig: { thinkingBudget: 2000 }
+          systemInstruction: "You are an expert tutor for Panday Classes. Provide deep, reassuring, and logical explanations (max 100 words).",
+          maxOutputTokens: 2000,
+          thinkingConfig: { thinkingBudget: 1000 }
         }
       });
-      // Access the .text property directly (not a method)
+      
+      // Fix: Access the .text property directly (not a method) as per the latest SDK guidelines
       setAiExplanation(response.text ?? "I'm sorry, I couldn't generate an explanation at this moment.");
     } catch (err) {
       console.error("Gemini AI Error:", err);

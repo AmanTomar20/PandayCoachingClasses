@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
@@ -17,25 +16,28 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
   const handleAskGemini = async (question: Question) => {
     setAiLoadingIds(prev => ({ ...prev, [question.id]: true }));
     try {
+      // Fix: Create a new GoogleGenAI instance right before the call
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const userSelected = question.options.find(o => o.id === submission.responses[question.id])?.text || "None";
       const correctText = question.options.find(o => o.id === question.correctOptionId)?.text;
 
-      const prompt = `You are an expert tutor for Panday Classes. 
-      The student is reviewing their attempt for the question: "${question.text}"
-      The correct answer is: "${correctText}".
-      The student chose: "${userSelected}".
-      Provide a logical, clear, and encouraging explanation (max 100 words) focusing on the conceptual reason why "${correctText}" is the right choice.`;
+      const prompt = `Reviewing attempt for: "${question.text}"
+      Correct answer: "${correctText}".
+      Student choice: "${userSelected}".
+      Explain why "${correctText}" is conceptually correct.`;
 
+      // Fix: Use systemInstruction and combined maxOutputTokens with thinkingBudget for consistency
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: prompt,
         config: { 
-          maxOutputTokens: 4096,
-          thinkingConfig: { thinkingBudget: 1500 } 
+          systemInstruction: "You are an expert tutor for Panday Classes. Provide clear, logical, and encouraging explanations (max 100 words).",
+          maxOutputTokens: 2000,
+          thinkingConfig: { thinkingBudget: 1000 } 
         }
       });
       
+      // Fix: Access response.text directly (property access)
       setAiExplanations(prev => ({ ...prev, [question.id]: response.text || "No explanation available." }));
     } catch (err) {
       console.error("Gemini AI Error:", err);
