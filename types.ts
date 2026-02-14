@@ -6,6 +6,8 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  password?: string;
+  username?: string;
 }
 
 export interface MCQOption {
@@ -19,14 +21,17 @@ export interface Question {
   options: MCQOption[];
   correctOptionId: string;
   explanation?: string;
+  imageUrl?: string;
 }
 
 export type AssessmentType = 'PRACTICE' | 'TEST';
+export type Subject = 'Mathematics' | 'Physics' | 'Chemistry';
 
 export interface Assessment {
   id: string;
   title: string;
   type: AssessmentType;
+  subject?: Subject;
   questions: Question[];
   durationMinutes?: number;
 }

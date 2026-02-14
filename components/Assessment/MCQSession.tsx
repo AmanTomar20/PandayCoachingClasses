@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
+import { GoogleGenAI } from "@google/genai";
 
 interface MCQSessionProps {
   assessment: Assessment;
@@ -17,6 +17,8 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
   const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
   const [isReviewing, setIsReviewing] = useState(false);
   const [reviewIndex, setReviewIndex] = useState(0);
+  const [aiExplanation, setAiExplanation] = useState<string | null>(null);
+  const [isAiLoading, setIsAiLoading] = useState(false);
 
   // Derived data
   const isPractice = assessment.type === 'PRACTICE';
@@ -27,6 +29,39 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
 
   const incorrectQuestions = assessment.questions.filter(q => responses[q.id] !== q.correctOptionId);
   const currentReviewQuestion = incorrectQuestions[reviewIndex];
+
+  // AI Tutor Integration using Gemini 3 Pro for complex reasoning
+  const handleAskGemini = async (question: Question) => {
+    setIsAiLoading(true);
+    setAiExplanation(null);
+    try {
+      // Create a new instance right before the call to ensure up-to-date API key
+      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const prompt = `You are an expert tutor for Panday Classes. 
+      The student got this question wrong: "${question.text}"
+      The correct answer is: "${question.options.find(o => o.id === question.correctOptionId)?.text}".
+      The student chose: "${question.options.find(o => o.id === responses[question.id])?.text}".
+      Provide a deep, reassuring, and logical explanation (max 100 words) of why the correct answer is right and why the student's choice was incorrect.`;
+
+      // Use generateContent with both model name and prompt
+      const response = await ai.models.generateContent({
+        model: 'gemini-3-pro-preview',
+        contents: prompt,
+        config: {
+          // Guidelines: Always set maxOutputTokens and thinkingBudget together
+          maxOutputTokens: 4096,
+          thinkingConfig: { thinkingBudget: 2000 }
+        }
+      });
+      // Access the .text property directly (not a method)
+      setAiExplanation(response.text ?? "I'm sorry, I couldn't generate an explanation at this moment.");
+    } catch (err) {
+      console.error("Gemini AI Error:", err);
+      setAiExplanation("I'm sorry, I'm having trouble connecting to my knowledge base right now. Please try again later!");
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
 
   const handleSelectOption = (optionId: string) => {
     if (isRevealed) return; // Prevent changing after showing answer in practice
@@ -97,14 +132,25 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
             <h2 className="text-2xl font-bold text-gray-800">{assessment.title}</h2>
             <p className="text-gray-500">Mistake {reviewIndex + 1} of {incorrectQuestions.length}</p>
           </div>
-          <button onClick={() => setIsReviewing(false)} className="text-gray-400 hover:text-indigo-600 font-bold flex items-center gap-2">
+          <button onClick={() => { setIsReviewing(false); setAiExplanation(null); }} className="text-gray-400 hover:text-indigo-600 font-bold flex items-center gap-2">
             Back <i className="fa-solid fa-arrow-turn-up"></i>
           </button>
         </div>
 
         <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mb-6">
            <div className="p-8">
-            <p className="text-xl text-gray-800 font-medium mb-8">{currentReviewQuestion.text}</p>
+            <p className="text-xl text-gray-800 font-medium mb-4">{currentReviewQuestion.text}</p>
+            
+            {currentReviewQuestion.imageUrl && (
+              <div className="mb-8 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
+                <img 
+                  src={currentReviewQuestion.imageUrl} 
+                  alt="Question Diagram" 
+                  className="max-h-48 object-contain"
+                />
+              </div>
+            )}
+
             <div className="space-y-4">
               {currentReviewQuestion.options.map((option) => (
                 <div key={option.id} className={`w-full p-4 rounded-xl border-2 flex items-center gap-4 ${getOptionStyles(currentReviewQuestion, option.id)}`}>
@@ -118,23 +164,57 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
                 </div>
               ))}
             </div>
-            {currentReviewQuestion.explanation && (
-              <div className="mt-8 p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded">
-                <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Explanation</p>
-                <p className="text-indigo-900">{currentReviewQuestion.explanation}</p>
+            
+            <div className="mt-8 grid grid-cols-1 gap-4">
+              {currentReviewQuestion.explanation && (
+                <div className="p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded">
+                  <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Standard Explanation</p>
+                  <p className="text-indigo-900">{currentReviewQuestion.explanation}</p>
+                </div>
+              )}
+
+              <div className="p-4 bg-violet-50 border-l-4 border-violet-400 rounded">
+                <div className="flex justify-between items-center mb-2">
+                  <p className="text-sm font-bold text-violet-700 uppercase">Gemini AI Tutor</p>
+                  {!aiExplanation && !isAiLoading && (
+                    <button 
+                      onClick={() => handleAskGemini(currentReviewQuestion)}
+                      className="text-[10px] bg-violet-600 text-white px-3 py-1 rounded-full hover:bg-violet-700 transition-colors"
+                    >
+                      Ask AI for help
+                    </button>
+                  )}
+                </div>
+                {isAiLoading ? (
+                  <div className="flex items-center gap-2 text-violet-600 animate-pulse">
+                    <i className="fa-solid fa-sparkles"></i>
+                    <span className="text-sm font-bold">Gemini is thinking...</span>
+                  </div>
+                ) : aiExplanation ? (
+                  <p className="text-violet-900 text-sm italic leading-relaxed">"{aiExplanation}"</p>
+                ) : (
+                  <p className="text-violet-400 text-sm">Need a deeper explanation? Ask our AI tutor.</p>
+                )}
               </div>
-            )}
+            </div>
           </div>
           <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-between">
             <button
               disabled={reviewIndex === 0}
-              onClick={() => setReviewIndex(prev => prev - 1)}
+              onClick={() => { setReviewIndex(prev => prev - 1); setAiExplanation(null); }}
               className="px-6 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30"
             >
               <i className="fa-solid fa-arrow-left mr-2"></i> Previous
             </button>
             <button
-              onClick={() => reviewIndex === incorrectQuestions.length - 1 ? setIsReviewing(false) : setReviewIndex(prev => prev + 1)}
+              onClick={() => {
+                if (reviewIndex === incorrectQuestions.length - 1) {
+                  setIsReviewing(false);
+                } else {
+                  setReviewIndex(prev => prev + 1);
+                  setAiExplanation(null);
+                }
+              }}
               className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200"
             >
               {reviewIndex === incorrectQuestions.length - 1 ? 'Done Reviewing' : 'Next Mistake'}
@@ -204,7 +284,18 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
         </div>
 
         <div className="p-8">
-          <p className="text-xl text-gray-800 font-medium mb-8">{currentQuestion.text}</p>
+          <p className="text-xl text-gray-800 font-medium mb-6">{currentQuestion.text}</p>
+          
+          {currentQuestion.imageUrl && (
+            <div className="mb-8 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
+              <img 
+                src={currentQuestion.imageUrl} 
+                alt="Question Diagram" 
+                className="max-h-48 object-contain rounded"
+              />
+            </div>
+          )}
+
           <div className="space-y-4">
             {currentQuestion.options.map((option) => (
               <button

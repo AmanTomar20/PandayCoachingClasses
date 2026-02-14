@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
-import { Assessment, User } from '../../types';
+import React, { useState, useEffect } from 'react';
+import { Assessment, User, Submission } from '../../types';
 import { Card } from '../UI/Card';
-import { MOCK_STUDENTS } from '../../constants';
 import { storageService } from '../../services/storageService';
 
 interface TeacherDashboardProps {
@@ -11,8 +10,29 @@ interface TeacherDashboardProps {
 }
 
 export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments }) => {
-  const submissions = storageService.getSubmissions();
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
+  const [students, setStudents] = useState<User[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setLoading(true);
+        const [allSubmissions, allStudents] = await Promise.all([
+          storageService.getSubmissions(),
+          storageService.getAllStudents()
+        ]);
+        setSubmissions(allSubmissions);
+        setStudents(allStudents);
+      } catch (err) {
+        console.error("Error loading teacher data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadData();
+  }, []);
 
   const getStudentSubmissions = (studentId: string) => {
     return submissions.filter(s => s.studentId === studentId);
@@ -24,6 +44,15 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments 
     const total = subs.reduce((acc, curr) => acc + (curr.score / curr.totalQuestions), 0);
     return (total / subs.length) * 100;
   };
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto py-20 px-4 text-center">
+        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-500 font-bold">Synchronizing Faculty Data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto py-10 px-4">
@@ -39,7 +68,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments 
             </div>
             <div>
               <p className="text-xs text-gray-500 font-bold uppercase">Students</p>
-              <p className="text-xl font-bold">{MOCK_STUDENTS.length}</p>
+              <p className="text-xl font-bold">{students.length}</p>
             </div>
           </div>
           <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex items-center gap-3">
@@ -59,7 +88,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments 
         <div className="lg:col-span-1">
           <Card title="Students List" icon="fa-user-graduate">
             <div className="space-y-2">
-              {MOCK_STUDENTS.map(student => {
+              {students.map(student => {
                 const avg = getAverageScore(student.id);
                 const isActive = selectedStudent?.id === student.id;
                 return (
@@ -110,11 +139,11 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments 
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
-                      {getStudentSubmissions(selectedStudent.id).slice().reverse().map(sub => {
+                      {getStudentSubmissions(selectedStudent.id).slice().reverse().map((sub, sidx) => {
                         const assessment = assessments.find(a => a.id === sub.assessmentId);
                         const accuracy = (sub.score / sub.totalQuestions) * 100;
                         return (
-                          <tr key={sub.id}>
+                          <tr key={sidx}>
                             <td className="py-4 text-sm text-gray-500">
                               {new Date(sub.completedAt).toLocaleDateString()}
                             </td>
@@ -170,9 +199,9 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments 
             </div>
           ) : (
             <div className="h-full min-h-[400px] flex flex-col items-center justify-center bg-gray-50 border-2 border-dashed border-gray-200 rounded-2xl p-10 text-center">
-              <i className="fa-solid fa-arrow-left text-gray-300 text-5xl mb-4"></i>
-              <h3 className="text-xl font-bold text-gray-400">Select a student from the list to view detailed progress.</h3>
-              <p className="text-gray-400 max-w-sm mt-2">You can track scores, accuracy, and history for each individual student.</p>
+              <i className="fa-solid fa-cloud-arrow-down text-gray-300 text-5xl mb-4"></i>
+              <h3 className="text-xl font-bold text-gray-400">Select a student to view cloud-synced progress.</h3>
+              <p className="text-gray-400 max-w-sm mt-2">All student records are securely retrieved from the Firebase Firestore database.</p>
             </div>
           )}
         </div>
