@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Assessment, Submission } from '../../types';
+import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
 
 interface MCQSessionProps {
@@ -14,15 +14,30 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [isFinished, setIsFinished] = useState(false);
+  const [revealedAnswers, setRevealedAnswers] = useState<Record<string, boolean>>({});
+  const [isReviewing, setIsReviewing] = useState(false);
+  const [reviewIndex, setReviewIndex] = useState(0);
 
+  // Derived data
+  const isPractice = assessment.type === 'PRACTICE';
   const currentQuestion = assessment.questions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === assessment.questions.length - 1;
+  const hasSelected = !!responses[currentQuestion.id];
+  const isRevealed = !!revealedAnswers[currentQuestion.id];
+
+  const incorrectQuestions = assessment.questions.filter(q => responses[q.id] !== q.correctOptionId);
+  const currentReviewQuestion = incorrectQuestions[reviewIndex];
 
   const handleSelectOption = (optionId: string) => {
+    if (isRevealed) return; // Prevent changing after showing answer in practice
     setResponses(prev => ({
       ...prev,
       [currentQuestion.id]: optionId
     }));
+  };
+
+  const handleShowAnswer = () => {
+    setRevealedAnswers(prev => ({ ...prev, [currentQuestion.id]: true }));
   };
 
   const calculateScore = () => {
@@ -50,8 +65,90 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
     setIsFinished(true);
   };
 
+  const getOptionStyles = (q: Question, optionId: string) => {
+    const isSelected = responses[q.id] === optionId;
+    const isCorrect = q.correctOptionId === optionId;
+    const revealed = revealedAnswers[q.id] || isReviewing;
+
+    if (!revealed) {
+      return isSelected 
+        ? 'border-indigo-600 bg-indigo-50 text-indigo-800' 
+        : 'border-gray-100 hover:border-indigo-200 bg-gray-50 text-gray-700';
+    }
+
+    if (isCorrect) {
+      return 'border-green-500 bg-green-50 text-green-800 font-bold';
+    }
+
+    if (isSelected && !isCorrect) {
+      return 'border-red-500 bg-red-50 text-red-800 font-bold';
+    }
+
+    return 'border-gray-100 bg-gray-50 opacity-50 text-gray-400';
+  };
+
+  // --- REVIEW MODE UI ---
+  if (isReviewing && currentReviewQuestion) {
+    return (
+      <div className="max-w-3xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <span className="px-2 py-1 bg-red-100 text-red-700 text-[10px] font-black uppercase rounded mb-2 inline-block">Reviewing Mistakes</span>
+            <h2 className="text-2xl font-bold text-gray-800">{assessment.title}</h2>
+            <p className="text-gray-500">Mistake {reviewIndex + 1} of {incorrectQuestions.length}</p>
+          </div>
+          <button onClick={() => setIsReviewing(false)} className="text-gray-400 hover:text-indigo-600 font-bold flex items-center gap-2">
+            Back <i className="fa-solid fa-arrow-turn-up"></i>
+          </button>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mb-6">
+           <div className="p-8">
+            <p className="text-xl text-gray-800 font-medium mb-8">{currentReviewQuestion.text}</p>
+            <div className="space-y-4">
+              {currentReviewQuestion.options.map((option) => (
+                <div key={option.id} className={`w-full p-4 rounded-xl border-2 flex items-center gap-4 ${getOptionStyles(currentReviewQuestion, option.id)}`}>
+                  <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                    responses[currentReviewQuestion.id] === option.id ? 'border-red-500 bg-red-500' : 
+                    currentReviewQuestion.correctOptionId === option.id ? 'border-green-500 bg-green-500' : 'border-gray-300'
+                  }`}>
+                    {(responses[currentReviewQuestion.id] === option.id || currentReviewQuestion.correctOptionId === option.id) && <div className="w-2 h-2 bg-white rounded-full" />}
+                  </div>
+                  <span>{option.text}</span>
+                </div>
+              ))}
+            </div>
+            {currentReviewQuestion.explanation && (
+              <div className="mt-8 p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded">
+                <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Explanation</p>
+                <p className="text-indigo-900">{currentReviewQuestion.explanation}</p>
+              </div>
+            )}
+          </div>
+          <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-between">
+            <button
+              disabled={reviewIndex === 0}
+              onClick={() => setReviewIndex(prev => prev - 1)}
+              className="px-6 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30"
+            >
+              <i className="fa-solid fa-arrow-left mr-2"></i> Previous
+            </button>
+            <button
+              onClick={() => reviewIndex === incorrectQuestions.length - 1 ? setIsReviewing(false) : setReviewIndex(prev => prev + 1)}
+              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200"
+            >
+              {reviewIndex === incorrectQuestions.length - 1 ? 'Done Reviewing' : 'Next Mistake'}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --- FINISHED UI ---
   if (isFinished) {
     const score = calculateScore();
+    const hasMistakes = incorrectQuestions.length > 0;
     return (
       <Card className="max-w-2xl mx-auto text-center" title="Assessment Completed">
         <div className="py-10">
@@ -65,6 +162,14 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
             <span className="text-5xl font-black text-indigo-800">{score} / {assessment.questions.length}</span>
           </div>
           <div className="flex flex-col gap-3 max-w-xs mx-auto">
+            {hasMistakes && (
+              <button 
+                onClick={() => setIsReviewing(true)}
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+              >
+                <i className="fa-solid fa-magnifying-glass"></i> Review Mistakes
+              </button>
+            )}
             <button 
               onClick={onCancel}
               className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
@@ -77,6 +182,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
     );
   }
 
+  // --- ACTIVE SESSION UI ---
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-6">
@@ -90,7 +196,6 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
       </div>
 
       <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-        {/* Progress Bar */}
         <div className="w-full h-2 bg-gray-100">
           <div 
             className="h-full bg-indigo-600 transition-all duration-300"
@@ -99,62 +204,76 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
         </div>
 
         <div className="p-8">
-          <p className="text-xl text-gray-800 font-medium mb-8">
-            {currentQuestion.text}
-          </p>
-
+          <p className="text-xl text-gray-800 font-medium mb-8">{currentQuestion.text}</p>
           <div className="space-y-4">
             {currentQuestion.options.map((option) => (
               <button
                 key={option.id}
+                disabled={isRevealed}
                 onClick={() => handleSelectOption(option.id)}
-                className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center gap-4 ${
-                  responses[currentQuestion.id] === option.id
-                    ? 'border-indigo-600 bg-indigo-50'
-                    : 'border-gray-100 hover:border-indigo-200 bg-gray-50'
-                }`}
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center gap-4 ${getOptionStyles(currentQuestion, option.id)}`}
               >
                 <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                  responses[currentQuestion.id] === option.id ? 'border-indigo-600 bg-indigo-600' : 'border-gray-300'
+                  responses[currentQuestion.id] === option.id ? (isRevealed && currentQuestion.correctOptionId !== option.id ? 'border-red-500 bg-red-500' : 'border-indigo-600 bg-indigo-600') : 
+                  (isRevealed && currentQuestion.correctOptionId === option.id ? 'border-green-500 bg-green-500' : 'border-gray-300')
                 }`}>
-                  {responses[currentQuestion.id] === option.id && (
-                    <div className="w-2 h-2 bg-white rounded-full" />
-                  )}
+                  {(responses[currentQuestion.id] === option.id || (isRevealed && currentQuestion.correctOptionId === option.id)) && <div className="w-2 h-2 bg-white rounded-full" />}
                 </div>
-                <span className={`text-lg ${responses[currentQuestion.id] === option.id ? 'text-indigo-800 font-semibold' : 'text-gray-700'}`}>
-                  {option.text}
-                </span>
+                <span className="text-lg">{option.text}</span>
               </button>
             ))}
           </div>
+
+          {isRevealed && currentQuestion.explanation && (
+            <div className="mt-8 p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded animate-in fade-in slide-in-from-top-2 duration-300">
+              <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Explanation</p>
+              <p className="text-indigo-900">{currentQuestion.explanation}</p>
+            </div>
+          )}
         </div>
 
-        <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-between">
+        <div className="p-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
           <button
             disabled={currentQuestionIndex === 0}
-            onClick={() => setCurrentQuestionIndex(prev => prev - 1)}
-            className="px-6 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30"
+            onClick={() => {
+              setCurrentQuestionIndex(prev => prev - 1);
+            }}
+            className="px-4 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30"
           >
             <i className="fa-solid fa-arrow-left mr-2"></i> Previous
           </button>
           
-          {isLastQuestion ? (
-            <button
-              disabled={!responses[currentQuestion.id]}
-              onClick={handleSubmit}
-              className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-lg shadow-green-200 transition-transform active:scale-95 disabled:opacity-50"
-            >
-              Finish & Submit
-            </button>
-          ) : (
-            <button
-              disabled={!responses[currentQuestion.id]}
-              onClick={() => setCurrentQuestionIndex(prev => prev + 1)}
-              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 transition-transform active:scale-95 disabled:opacity-50"
-            >
-              Next <i className="fa-solid fa-arrow-right ml-2"></i>
-            </button>
-          )}
+          <div className="flex items-center gap-4">
+            {isPractice && !isRevealed && (
+              <button
+                disabled={!hasSelected}
+                onClick={handleShowAnswer}
+                className="px-4 py-2 text-indigo-600 font-bold hover:bg-indigo-100 rounded-lg disabled:opacity-30 transition-colors flex items-center gap-2"
+              >
+                <i className="fa-solid fa-eye"></i> Show Answer
+              </button>
+            )}
+
+            {isLastQuestion ? (
+              <button
+                disabled={!hasSelected}
+                onClick={handleSubmit}
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-lg shadow-green-200 transition-transform active:scale-95 disabled:opacity-50"
+              >
+                Finish & Submit
+              </button>
+            ) : (
+              <button
+                disabled={!hasSelected}
+                onClick={() => {
+                  setCurrentQuestionIndex(prev => prev + 1);
+                }}
+                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 transition-transform active:scale-95 disabled:opacity-50"
+              >
+                Next <i className="fa-solid fa-arrow-right ml-2"></i>
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
