@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
@@ -16,32 +17,30 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
   const handleAskGemini = async (question: Question) => {
     setAiLoadingIds(prev => ({ ...prev, [question.id]: true }));
     try {
-      // Fix: Create a new GoogleGenAI instance right before the call
+      // Create fresh instance to ensure the API key from process.env is used
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const userSelected = question.options.find(o => o.id === submission.responses[question.id])?.text || "None";
       const correctText = question.options.find(o => o.id === question.correctOptionId)?.text;
 
-      const prompt = `Reviewing attempt for: "${question.text}"
-      Correct answer: "${correctText}".
-      Student choice: "${userSelected}".
-      Explain why "${correctText}" is conceptually correct.`;
+      const prompt = `Reviewing student attempt for: "${question.text}"
+      The correct answer is: "${correctText}".
+      The student chose: "${userSelected}".
+      Provide a concise, encouraging, and conceptually deep explanation (max 100 words) of why "${correctText}" is the correct answer.`;
 
-      // Fix: Use systemInstruction and combined maxOutputTokens with thinkingBudget for consistency
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: prompt,
         config: { 
-          systemInstruction: "You are an expert tutor for Panday Classes. Provide clear, logical, and encouraging explanations (max 100 words).",
+          systemInstruction: "You are an expert tutor for Panday Classes. Your tone is professional, encouraging, and clear. Use italics for your final response.",
           maxOutputTokens: 2000,
           thinkingConfig: { thinkingBudget: 1000 } 
         }
       });
       
-      // Fix: Access response.text directly (property access)
       setAiExplanations(prev => ({ ...prev, [question.id]: response.text || "No explanation available." }));
     } catch (err) {
-      console.error("Gemini AI Error:", err);
-      setAiExplanations(prev => ({ ...prev, [question.id]: "Unable to connect to AI tutor. Please try again." }));
+      console.error("Gemini API Error:", err);
+      setAiExplanations(prev => ({ ...prev, [question.id]: "I'm having trouble connecting to the cloud right now. Please try again in a moment!" }));
     } finally {
       setAiLoadingIds(prev => ({ ...prev, [question.id]: false }));
     }
@@ -57,7 +56,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
             onClick={onClose}
             className="flex items-center gap-2 text-indigo-600 font-bold mb-4 hover:translate-x-[-4px] transition-transform"
           >
-            <i className="fa-solid fa-arrow-left"></i> Back to Performance Analytics
+            <i className="fa-solid fa-arrow-left"></i> Back to Dashboard
           </button>
           <h2 className="text-3xl font-black text-gray-900">Review: {assessment.title}</h2>
           <p className="text-gray-500 font-medium">Completed on {new Date(submission.completedAt).toLocaleDateString()}</p>
@@ -83,98 +82,92 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
           const isAiLoading = aiLoadingIds[q.id];
 
           return (
-            <div key={q.id} className={`bg-white rounded-xl shadow-sm border ${isCorrect ? 'border-indigo-200' : 'border-red-200'} p-6 relative`}>
+            <div key={q.id} className={`bg-white rounded-3xl shadow-sm border ${isCorrect ? 'border-indigo-100' : 'border-red-100'} p-8 relative transition-all hover:shadow-md`}>
               {/* Question Header */}
-              <div className="flex items-start gap-4 mb-4">
+              <div className="flex items-start gap-4 mb-6">
                 <div className={`w-8 h-8 min-w-[32px] rounded-lg flex items-center justify-center font-black text-sm ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                   {idx + 1}
                 </div>
                 <div className="flex-grow pr-32">
-                  <h4 className="text-lg font-bold text-gray-800 leading-tight mb-2">{q.text}</h4>
-                  <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                  <h4 className="text-xl font-bold text-gray-800 leading-tight mb-3">{q.text}</h4>
+                  <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                     {isCorrect ? 'CORRECT' : 'INCORRECT'}
                   </span>
                 </div>
                 
-                {/* Ask AI Tutor Button - Floating right style */}
-                <div className="absolute top-6 right-6">
-                   {!aiExplanation && !isAiLoading && (
+                {/* Ask AI Tutor Button - Styled exactly like the screenshot */}
+                {!aiExplanation && !isAiLoading && (
+                  <div className="absolute top-8 right-8">
                     <button 
                       onClick={() => handleAskGemini(q)}
-                      className="flex flex-col items-center justify-center bg-gradient-to-br from-indigo-500 to-violet-600 text-white w-20 h-12 rounded-xl text-[9px] font-black uppercase hover:shadow-lg transition-all active:scale-95"
+                      className="flex flex-col items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white w-24 h-16 rounded-2xl border-4 border-indigo-100 transition-all active:scale-95 shadow-lg shadow-indigo-100 group"
                     >
-                      <span>ASK AI</span>
-                      <span>TUTOR</span>
+                      <span className="text-[10px] font-black uppercase tracking-tighter leading-none group-hover:scale-105 transition-transform">ASK AI</span>
+                      <span className="text-[10px] font-black uppercase tracking-tighter leading-none group-hover:scale-105 transition-transform">TUTOR</span>
                     </button>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
 
               {/* Question Image */}
               {q.imageUrl && (
-                <div className="mb-6 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
+                <div className="mb-8 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm flex justify-center">
                   <img 
                     src={q.imageUrl} 
                     alt="Question Diagram" 
-                    className="max-h-60 object-contain rounded"
+                    className="max-h-64 object-contain rounded-lg"
                     onError={(e) => {
-                        console.error("Image failed to load:", q.imageUrl);
-                        (e.target as HTMLImageElement).src = "https://placehold.co/600x400?text=Diagram+Not+Available";
+                        (e.target as HTMLImageElement).src = "https://placehold.co/600x400?text=Image+Load+Error";
                     }}
                   />
                 </div>
               )}
 
               {/* Options Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {q.options.map((opt) => {
                   const isOptSelected = userSelectedId === opt.id;
                   const isOptCorrect = q.correctOptionId === opt.id;
                   
-                  let style = "border-gray-100 bg-gray-50 text-gray-500";
+                  let containerStyle = "border-gray-100 bg-gray-50/50 text-gray-500";
+                  let circleStyle = "border-gray-300";
                   let icon = null;
 
                   if (isOptCorrect) {
-                    style = "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold";
+                    containerStyle = "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-4 ring-emerald-50";
+                    circleStyle = "border-emerald-500 bg-emerald-500";
                     icon = <i className="fa-solid fa-circle-check text-emerald-500 ml-auto"></i>;
                   } else if (isOptSelected && !isOptCorrect) {
-                    style = "border-red-500 bg-red-50 text-red-800 font-bold";
+                    containerStyle = "border-red-500 bg-red-50 text-red-800 font-bold ring-4 ring-red-50";
+                    circleStyle = "border-red-500 bg-red-500";
                     icon = <i className="fa-solid fa-circle-xmark text-red-500 ml-auto"></i>;
                   }
 
                   return (
-                    <div key={opt.id} className={`p-4 rounded-xl border-2 flex items-center gap-3 transition-all ${style}`}>
-                      <span className="text-sm">{opt.text}</span>
+                    <div key={opt.id} className={`p-5 rounded-2xl border-2 flex items-center gap-4 transition-all ${containerStyle}`}>
+                      <span>{opt.text}</span>
                       {icon}
                     </div>
                   );
                 })}
               </div>
 
-              {/* Explanations Section */}
-              {(q.explanation || aiExplanation || isAiLoading) && (
-                <div className="mt-4 p-5 bg-gray-50 rounded-2xl border border-gray-100 space-y-4">
-                  {q.explanation && !aiExplanation && !isAiLoading && (
-                    <div>
-                      <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Standard Explanation</p>
-                      <p className="text-sm text-gray-700 leading-relaxed">{q.explanation}</p>
-                    </div>
-                  )}
-                  
+              {/* AI Tutor Insights Section - Lavender style from screenshot */}
+              {(aiExplanation || isAiLoading) && (
+                <div className="mt-6 p-8 bg-[#F5F3FF] rounded-3xl border border-[#E0E7FF] animate-in fade-in slide-in-from-top-4 duration-500">
+                  <div className="flex items-center gap-3 mb-3">
+                    <p className="text-[11px] font-black text-violet-600 uppercase tracking-widest">AI Tutor Insights</p>
+                  </div>
                   {isAiLoading ? (
-                    <div className="flex items-center gap-3 text-violet-600 animate-pulse py-2">
-                      <i className="fa-solid fa-circle-notch animate-spin"></i>
-                      <span className="text-sm font-black uppercase tracking-wider">Gemini AI Tutor is thinking...</span>
+                    <div className="flex items-center gap-3 text-violet-600 animate-pulse">
+                      <div className="w-2 h-2 bg-violet-600 rounded-full animate-bounce"></div>
+                      <span className="text-sm font-bold italic">Analyzing concept...</span>
                     </div>
-                  ) : aiExplanation ? (
-                    <div className="animate-in fade-in slide-in-from-top-2 duration-300">
-                      <div className="flex items-center gap-2 mb-2">
-                        <i className="fa-solid fa-sparkles text-violet-500"></i>
-                        <p className="text-[10px] font-black text-violet-600 uppercase tracking-widest">AI Tutor Insights</p>
-                      </div>
-                      <p className="text-sm text-gray-800 italic leading-relaxed">"{aiExplanation}"</p>
-                    </div>
-                  ) : null}
+                  ) : (
+                    <p className="text-[15px] text-gray-800 italic leading-relaxed whitespace-pre-line">
+                      "{aiExplanation}"
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -182,12 +175,12 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
         })}
       </div>
 
-      <div className="mt-12 flex justify-center px-4">
+      <div className="mt-16 flex justify-center px-4">
         <button 
           onClick={onClose}
-          className="w-full md:w-auto px-12 py-4 bg-indigo-600 text-white rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95"
+          className="w-full md:w-auto px-16 py-5 bg-indigo-600 text-white rounded-3xl font-black uppercase tracking-widest shadow-2xl shadow-indigo-200 hover:bg-indigo-700 hover:scale-[1.02] transition-all active:scale-95"
         >
-          Return to Dashboard
+          Return to Performance Center
         </button>
       </div>
     </div>
