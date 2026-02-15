@@ -22,7 +22,6 @@ const COLLECTIONS = {
 const USER_SESSION_KEY = 'panday_user_id';
 
 export const storageService = {
-  // Session handling (Local check for persistence)
   getCurrentUserLocal: (): string | null => {
     return localStorage.getItem(USER_SESSION_KEY);
   },
@@ -32,7 +31,6 @@ export const storageService = {
     else localStorage.removeItem(USER_SESSION_KEY);
   },
 
-  // Firestore Operations
   getUserById: async (userId: string): Promise<User | null> => {
     try {
       const docRef = doc(db, COLLECTIONS.USERS, userId);
@@ -100,37 +98,36 @@ export const storageService = {
     await addDoc(collection(db, COLLECTIONS.SUBMISSIONS), submission);
   },
 
-  // This function ensures the cloud database stays in sync with hardcoded constants.
-  // It now updates existing assessments (merging) instead of only adding missing ones.
+  saveAssessment: async (assessment: Assessment): Promise<void> => {
+    await setDoc(doc(db, COLLECTIONS.ASSESSMENTS, assessment.id), assessment);
+  },
+
   getAssessments: async (): Promise<Assessment[]> => {
     try {
-      // 1. Sync all initial assessments from constants.tsx to ensure cloud has latest data (including images)
-      console.log("Synchronizing initial assessment data to cloud...");
-      for (const assessment of INITIAL_ASSESSMENTS) {
-        await setDoc(doc(db, COLLECTIONS.ASSESSMENTS, assessment.id), assessment, { merge: true });
-      }
-
-      // 2. Fetch final data from cloud
       const querySnapshot = await getDocs(collection(db, COLLECTIONS.ASSESSMENTS));
-      return querySnapshot.docs.map(doc => doc.data() as Assessment);
+      const cloudAssessments = querySnapshot.docs.map(doc => doc.data() as Assessment);
+      
+      // If cloud is empty, seed with initials
+      if (cloudAssessments.length === 0) {
+        for (const assessment of INITIAL_ASSESSMENTS) {
+          await setDoc(doc(db, COLLECTIONS.ASSESSMENTS, assessment.id), assessment);
+        }
+        return INITIAL_ASSESSMENTS;
+      }
+      return cloudAssessments;
     } catch (e) {
-      console.error("Error fetching/syncing assessments. Check Firebase Rules:", e);
-      return INITIAL_ASSESSMENTS; // Safe fallback
+      console.error("Error fetching assessments:", e);
+      return INITIAL_ASSESSMENTS;
     }
   },
 
   seedInitialData: async (): Promise<void> => {
     try {
-      // Always ensure teacher exists
       const teacherDoc = doc(db, COLLECTIONS.USERS, MOCK_TEACHER.id);
       await setDoc(teacherDoc, MOCK_TEACHER, { merge: true });
-      
-      // Ensure mock students exist for first-time use
       for (const student of MOCK_STUDENTS) {
         await setDoc(doc(db, COLLECTIONS.USERS, student.id), student, { merge: true });
       }
-      
-      console.log("Cloud sync initialized successfully.");
     } catch (e) {
       console.error("Seeding initial data failed:", e);
     }

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
@@ -35,7 +36,6 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
     setIsAiLoading(true);
     setAiExplanation(null);
     try {
-      // Fix: Create a new instance right before the call to ensure up-to-date API key
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
       const userChoice = question.options.find(o => o.id === responses[question.id])?.text || "None";
@@ -46,7 +46,6 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
       The student chose: "${userChoice}".
       Provide a deep, reassuring, and logical explanation of why the correct answer is right and why the student's choice was incorrect.`;
 
-      // Fix: Use systemInstruction for persona and set maxOutputTokens with thinkingBudget together
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
         contents: prompt,
@@ -57,7 +56,6 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
         }
       });
       
-      // Fix: Access the .text property directly (not a method) as per the latest SDK guidelines
       setAiExplanation(response.text ?? "I'm sorry, I couldn't generate an explanation at this moment.");
     } catch (err) {
       console.error("Gemini AI Error:", err);
@@ -143,14 +141,17 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
 
         <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mb-6">
            <div className="p-8">
-            <p className="text-xl text-gray-800 font-medium mb-4">{currentReviewQuestion.text}</p>
+            <p className="text-xl text-gray-800 font-medium mb-6">{currentReviewQuestion.text}</p>
             
             {currentReviewQuestion.imageUrl && (
               <div className="mb-8 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
                 <img 
                   src={currentReviewQuestion.imageUrl} 
                   alt="Question Diagram" 
-                  className="max-h-48 object-contain"
+                  className="max-h-64 object-contain rounded"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
                 />
               </div>
             )}
@@ -172,7 +173,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
             <div className="mt-8 grid grid-cols-1 gap-4">
               {currentReviewQuestion.explanation && (
                 <div className="p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded">
-                  <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Standard Explanation</p>
+                  <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Standard Hint</p>
                   <p className="text-indigo-900">{currentReviewQuestion.explanation}</p>
                 </div>
               )}
@@ -274,7 +275,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
           <h2 className="text-2xl font-bold text-gray-800">{assessment.title}</h2>
           <p className="text-gray-500">Question {currentQuestionIndex + 1} of {assessment.questions.length}</p>
         </div>
-        <button onClick={onCancel} className="text-gray-400 hover:text-red-500">
+        <button onClick={onCancel} className="text-gray-400 hover:text-red-500 transition-colors">
           <i className="fa-solid fa-xmark text-2xl"></i>
         </button>
       </div>
@@ -295,7 +296,10 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
               <img 
                 src={currentQuestion.imageUrl} 
                 alt="Question Diagram" 
-                className="max-h-48 object-contain rounded"
+                className="max-h-64 object-contain rounded"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
               />
             </div>
           )}
@@ -333,7 +337,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
             onClick={() => {
               setCurrentQuestionIndex(prev => prev - 1);
             }}
-            className="px-4 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30"
+            className="px-4 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30 transition-colors"
           >
             <i className="fa-solid fa-arrow-left mr-2"></i> Previous
           </button>
