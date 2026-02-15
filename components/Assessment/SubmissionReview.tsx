@@ -95,7 +95,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                   </span>
                 </div>
                 
-                {/* Ask AI Tutor Button - Styled exactly like the screenshot */}
+                {/* Ask AI Tutor Button */}
                 {!aiExplanation && !isAiLoading && (
                   <div className="absolute top-8 right-8">
                     <button 
@@ -130,16 +130,13 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                   const isOptCorrect = q.correctOptionId === opt.id;
                   
                   let containerStyle = "border-gray-100 bg-gray-50/50 text-gray-500";
-                  let circleStyle = "border-gray-300";
                   let icon = null;
 
                   if (isOptCorrect) {
                     containerStyle = "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-4 ring-emerald-50";
-                    circleStyle = "border-emerald-500 bg-emerald-500";
                     icon = <i className="fa-solid fa-circle-check text-emerald-500 ml-auto"></i>;
                   } else if (isOptSelected && !isOptCorrect) {
                     containerStyle = "border-red-500 bg-red-50 text-red-800 font-bold ring-4 ring-red-50";
-                    circleStyle = "border-red-500 bg-red-500";
                     icon = <i className="fa-solid fa-circle-xmark text-red-500 ml-auto"></i>;
                   }
 
@@ -152,7 +149,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                 })}
               </div>
 
-              {/* AI Tutor Insights Section - Lavender style from screenshot */}
+              {/* AI Tutor Insights Section */}
               {(aiExplanation || isAiLoading) && (
                 <div className="mt-6 p-8 bg-[#F5F3FF] rounded-3xl border border-[#E0E7FF] animate-in fade-in slide-in-from-top-4 duration-500">
                   <div className="flex items-center gap-3 mb-3">
