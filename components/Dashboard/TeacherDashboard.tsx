@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Assessment, User, Submission, AssessmentType, Subject, Question, MCQOption } from '../../types';
+import { Assessment, User, Submission, AssessmentType, Subject, Question } from '../../types';
 import { Card } from '../UI/Card';
 import { storageService } from '../../services/storageService';
 import { GoogleGenAI, Type } from "@google/genai";
