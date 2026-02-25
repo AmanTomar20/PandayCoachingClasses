@@ -123,21 +123,29 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onLoginSuccess }) => {
 
       <div className="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-12 items-center relative z-10">
         {/* Branding Section */}
-        <div className="hidden md:block">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="bg-indigo-600 w-12 h-12 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
-              <i className="fa-solid fa-book-open text-white text-2xl"></i>
+        <div className="block">
+          <div className="flex items-center justify-center md:justify-start gap-3 mb-4 md:mb-6">
+            <div className="bg-indigo-600 w-10 h-10 md:w-12 md:h-12 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-200">
+              <i className="fa-solid fa-book-open text-white text-xl md:text-2xl"></i>
             </div>
-            <h1 className="text-3xl font-black text-indigo-900 tracking-tight">Panday Classes</h1>
+            <div className="flex flex-col items-center md:items-start leading-none">
+              <h1 className="text-2xl md:text-3xl font-black text-indigo-900 tracking-tight">PrepHive 🐝</h1>
+              <span 
+                className="text-base md:text-lg italic text-indigo-600 mt-1" 
+                style={{ fontFamily: "'Dancing Script', cursive" }}
+              >
+                By Raunak Pandey
+              </span>
+            </div>
           </div>
-          <h2 className="text-5xl font-black text-gray-900 leading-tight mb-6">
-            Cloud Enabled <br /> 
-            <span className="text-indigo-600">Education.</span>
+          <h2 className="hidden md:block text-3xl md:text-5xl font-black text-gray-900 leading-tight mb-4 md:mb-6">
+            Where hard work <br className="hidden md:block" /> 
+            <span className="text-indigo-600">meets high scores</span>
           </h2>
-          <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-            Your progress is now synced across all devices. Access your practice sets and test results anywhere, anytime.
+          <p className="hidden md:block text-lg md:text-xl text-gray-600 mb-6 md:mb-8 leading-relaxed">
+            Master 10th-12th boards and JEE/Advanced. Practice thousands of curated MCQs with real-time analytics to crush your exams.
           </p>
-          <div className="flex gap-4">
+          <div className="hidden md:flex gap-4 mb-8 md:mb-0">
             <div className="flex flex-col">
               <span className="text-3xl font-black text-indigo-600">Secure</span>
               <span className="text-sm text-gray-500 font-bold uppercase">Data Storage</span>

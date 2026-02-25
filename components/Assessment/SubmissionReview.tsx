@@ -31,7 +31,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
         model: 'gemini-3-pro-preview',
         contents: prompt,
         config: { 
-          systemInstruction: "You are an expert tutor for Panday Classes. Your tone is professional, encouraging, and clear. Use italics for your final response.",
+          systemInstruction: "You are an expert tutor for PrepHive 🐝. Your tone is professional, encouraging, and clear. Use italics for your final response.",
           maxOutputTokens: 2000,
           thinkingConfig: { thinkingBudget: 1000 } 
         }

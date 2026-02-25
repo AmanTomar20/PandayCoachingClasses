@@ -54,7 +54,7 @@ const App: React.FC = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
         <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p className="text-indigo-900 font-bold animate-pulse tracking-wide uppercase text-xs">Initializing Panday Classes Cloud...</p>
+        <p className="text-indigo-900 font-bold animate-pulse tracking-wide uppercase text-xs">Initializing PrepHive 🐝...</p>
       </div>
     );
   }
@@ -83,7 +83,15 @@ const App: React.FC = () => {
             <div className="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
               <i className="fa-solid fa-book-open text-white text-sm"></i>
             </div>
-            <span className="font-black text-indigo-900 tracking-tight uppercase">Panday Classes</span>
+            <div className="flex flex-col leading-none">
+              <span className="font-black text-indigo-900 tracking-tight uppercase">PrepHive 🐝</span>
+              <span 
+                className="text-[10px] italic text-indigo-600" 
+                style={{ fontFamily: "'Dancing Script', cursive" }}
+              >
+                By Raunak Pandey
+              </span>
+            </div>
           </div>
           
           <div className="flex items-center gap-6">
@@ -116,7 +124,7 @@ const App: React.FC = () => {
       {/* Simple Footer */}
       <footer className="bg-white border-t border-gray-100 py-6">
         <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-400 font-medium">
-          © {new Date().getFullYear()} Panday Classes Education Pvt. Ltd. All rights reserved.
+          © {new Date().getFullYear()} PrepHive 🐝 by Raunak Pandey. All rights reserved.
         </div>
       </footer>
     </div>

@@ -19,7 +19,7 @@ const COLLECTIONS = {
   ASSESSMENTS: 'assessments'
 };
 
-const USER_SESSION_KEY = 'panday_user_id';
+const USER_SESSION_KEY = 'prephive_user_id';
 
 export const storageService = {
   getCurrentUserLocal: (): string | null => {

@@ -3,8 +3,8 @@ import { Assessment, User } from './types';
 
 export const MOCK_TEACHER: User = {
   id: 't1',
-  name: 'Prof. Rajesh Panday',
-  email: 'rajesh@pandayclasses.com',
+  name: 'Prof. Raunak Pandey',
+  email: 'raunak@prephive.com',
   username: 'admin',
   password: 'password123',
   role: 'TEACHER',

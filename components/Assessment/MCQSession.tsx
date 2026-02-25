@@ -50,7 +50,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
         model: 'gemini-3-pro-preview',
         contents: prompt,
         config: {
-          systemInstruction: "You are an expert tutor for Panday Classes. Provide deep, reassuring, and logical explanations (max 100 words).",
+          systemInstruction: "You are an expert tutor for PrepHive 🐝. Provide deep, reassuring, and logical explanations (max 100 words).",
           maxOutputTokens: 2000,
           thinkingConfig: { thinkingBudget: 1000 }
         }

@@ -445,7 +445,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
       <header className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
         <div>
           <h1 className="text-4xl font-extrabold text-gray-900 mb-1">Faculty Portal</h1>
-          <p className="text-lg text-gray-600">Managing Panday Classes Excellence.</p>
+          <p className="text-lg text-gray-600">Managing PrepHive 🐝 Excellence.</p>
         </div>
         
         <div className="flex bg-white p-1 rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">

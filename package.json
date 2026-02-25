@@ -1,12 +1,13 @@
 
 {
-  "name": "panday-classes",
+  "name": "prephive",
   "private": true,
   "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
+    "lint": "tsc --noEmit",
     "preview": "vite preview"
   },
   "dependencies": {
