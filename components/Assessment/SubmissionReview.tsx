@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
 import { GoogleGenAI } from "@google/genai";
+import { FormattedText } from '../UI/FormattedText';
 
 interface SubmissionReviewProps {
   submission: Submission;
@@ -89,7 +90,9 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                   {idx + 1}
                 </div>
                 <div className="flex-grow pr-32">
-                  <h4 className="text-xl font-bold text-gray-800 leading-tight mb-3">{q.text}</h4>
+                  <h4 className="text-xl font-bold text-gray-800 leading-tight mb-3">
+                    <FormattedText text={q.text} />
+                  </h4>
                   <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                     {isCorrect ? 'CORRECT' : 'INCORRECT'}
                   </span>
@@ -142,7 +145,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
 
                   return (
                     <div key={opt.id} className={`p-5 rounded-2xl border-2 flex items-center gap-4 transition-all ${containerStyle}`}>
-                      <span>{opt.text}</span>
+                      <span><FormattedText text={opt.text} /></span>
                       {icon}
                     </div>
                   );

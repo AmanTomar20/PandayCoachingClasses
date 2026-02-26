@@ -104,17 +104,14 @@ export const storageService = {
 
   getAssessments: async (): Promise<Assessment[]> => {
     try {
-      const querySnapshot = await getDocs(collection(db, COLLECTIONS.ASSESSMENTS));
-      const cloudAssessments = querySnapshot.docs.map(doc => doc.data() as Assessment);
-      
-      // If cloud is empty, seed with initials
-      if (cloudAssessments.length === 0) {
-        for (const assessment of INITIAL_ASSESSMENTS) {
-          await setDoc(doc(db, COLLECTIONS.ASSESSMENTS, assessment.id), assessment);
-        }
-        return INITIAL_ASSESSMENTS;
+      // Force Sync: Always update initial assessments from constants.tsx to ensure 
+      // code changes are reflected in the database.
+      for (const assessment of INITIAL_ASSESSMENTS) {
+        await setDoc(doc(db, COLLECTIONS.ASSESSMENTS, assessment.id), assessment);
       }
-      return cloudAssessments;
+
+      const querySnapshot = await getDocs(collection(db, COLLECTIONS.ASSESSMENTS));
+      return querySnapshot.docs.map(doc => doc.data() as Assessment);
     } catch (e) {
       console.error("Error fetching assessments:", e);
       return INITIAL_ASSESSMENTS;

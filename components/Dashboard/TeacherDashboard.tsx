@@ -4,6 +4,7 @@ import { Assessment, User, Submission, AssessmentType, Subject, Question } from 
 import { Card } from '../UI/Card';
 import { storageService } from '../../services/storageService';
 import { GoogleGenAI, Type } from "@google/genai";
+import { FormattedText } from '../UI/FormattedText';
 
 interface TeacherDashboardProps {
   user: User;
@@ -93,7 +94,8 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
       2. Each question must have 4 options with IDs 'a', 'b', 'c', and 'd'.
       3. Focus on conceptual understanding as requested by the teacher's instructions.
       4. Explanations must be concise (max 2 sentences).
-      5. Output ONLY raw JSON matching the schema.`;
+      5. FORMATTING: Use LaTeX for all mathematical expressions (e.g., $x^2$, $\\frac{a}{b}$). For chemical formulas and equations, ALWAYS use the \\ce{} command within LaTeX delimiters (e.g., $\\ce{H2SO4}$, $\\ce{R-OH + HCl ->[ZnCl2] R-Cl + H2O}$).
+      6. Output ONLY raw JSON matching the schema.`;
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
@@ -727,7 +729,9 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                 <div className="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
                   {generatedPreview.questions?.map((q, qidx) => (
                     <div key={qidx} className="p-6 bg-gray-50 rounded-2xl border border-gray-100">
-                      <p className="font-bold text-gray-800 mb-4">{q.text}</p>
+                      <p className="font-bold text-gray-800 mb-4">
+                        <FormattedText text={q.text} />
+                      </p>
                       
                       {q.imageUrl && (
                         <div className="mb-6 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
@@ -742,7 +746,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                       <div className="grid grid-cols-2 gap-2">
                         {q.options?.map((opt: any) => (
                           <div key={opt.id} className={`p-3 rounded-lg text-xs font-medium border ${opt.id === q.correctOptionId ? 'bg-emerald-50 border-emerald-200 text-emerald-700 font-bold' : 'bg-white border-gray-100 text-gray-500'}`}>
-                            <span className="opacity-50 mr-2 uppercase">{opt.id}.</span> {opt.text}
+                            <span className="opacity-50 mr-2 uppercase">{opt.id}.</span> <FormattedText text={opt.text} />
                           </div>
                         ))}
                       </div>

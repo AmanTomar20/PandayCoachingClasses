@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
 import { GoogleGenAI } from "@google/genai";
+import { FormattedText } from '../UI/FormattedText';
 
 interface MCQSessionProps {
   assessment: Assessment;
@@ -141,7 +142,9 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
 
         <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mb-6">
            <div className="p-8">
-            <p className="text-xl text-gray-800 font-medium mb-6">{currentReviewQuestion.text}</p>
+            <p className="text-xl text-gray-800 font-medium mb-6">
+              <FormattedText text={currentReviewQuestion.text} />
+            </p>
             
             {currentReviewQuestion.imageUrl && (
               <div className="mb-8 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
@@ -165,7 +168,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
                   }`}>
                     {(responses[currentReviewQuestion.id] === option.id || currentReviewQuestion.correctOptionId === option.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
-                  <span>{option.text}</span>
+                  <span><FormattedText text={option.text} /></span>
                 </div>
               ))}
             </div>
@@ -289,7 +292,9 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
         </div>
 
         <div className="p-8">
-          <p className="text-xl text-gray-800 font-medium mb-6">{currentQuestion.text}</p>
+          <p className="text-xl text-gray-800 font-medium mb-6">
+            <FormattedText text={currentQuestion.text} />
+          </p>
           
           {currentQuestion.imageUrl && (
             <div className="mb-8 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
@@ -318,7 +323,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
                 }`}>
                   {(responses[currentQuestion.id] === option.id || (isRevealed && currentQuestion.correctOptionId === option.id)) && <div className="w-2 h-2 bg-white rounded-full" />}
                 </div>
-                <span className="text-lg">{option.text}</span>
+                <span className="text-lg"><FormattedText text={option.text} /></span>
               </button>
             ))}
           </div>

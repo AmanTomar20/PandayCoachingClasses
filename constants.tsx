@@ -168,7 +168,7 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
       },
       {
         id: 'ct1_q3',
-        text: 'What is the correct order of reactivity of alcohols in the reaction R-OH + HCl --(ZnCl2)--> R-Cl + H2O?',
+        text: 'What is the correct order of reactivity of alcohols in the reaction $\\ce{R-OH + HCl ->[ZnCl2] R-Cl + H2O}$',
         options: [{id: 'a', text: '1° > 2° > 3°'}, {id: 'b', text: '3° > 2° > 1°'}, {id: 'c', text: '2° > 1° > 3°'}, {id: 'd', text: '3° > 1° > 2°'}],
         correctOptionId: 'b'
       },
@@ -181,13 +181,13 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
       {
         id: 'ct1_q5',
         text: 'The compound which gives the most stable carbonium ion on dehydration is –',
-        options: [{id: 'a', text: '(CH3)2CHCH2OH'}, {id: 'b', text: '(CH3)3COH'}, {id: 'c', text: 'CH3CH2CH2CH2OH'}, {id: 'd', text: 'CH3CH (OH) CH2 CH3'}],
+        options: [{id: 'a', text: '$\\ce{(CH3)2CHCH2OH}$'}, {id: 'b', text: '$\\ce{(CH3)3COH}$'}, {id: 'c', text: '$\\ce{CH3CH2CH2CH2OH}$'}, {id: 'd', text: '$\\ce{CH3CH(OH)CH2CH3}$'}],
         correctOptionId: 'b'
       },
       {
         id: 'ct1_q6',
         text: 'Cyclohexene is best prepared from cyclohexanol by which of the following –',
-        options: [{id: 'a', text: 'Conc. H3PO4'}, {id: 'b', text: 'Conc. HCl/ZnCl2'}, {id: 'c', text: 'Conc. HCl'}, {id: 'd', text: 'Conc. HBr'}],
+        options: [{id: 'a', text: '$\\ce{Conc. H3PO4}$'}, {id: 'b', text: '$\\ce{Conc. HCl/ZnCl2}$'}, {id: 'c', text: '$\\ce{Conc. HCl}$'}, {id: 'd', text: '$\\ce{Conc. HBr}$'}],
         correctOptionId: 'a'
       },
       {
@@ -204,7 +204,7 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
       },
       {
         id: 'ct1_q9',
-        text: 'During dehydration of alcohols to alkenes by heating with conc. H2SO4 the initial Step is –',
+        text: 'During dehydration of alcohols to alkenes by heating with $\\ce{conc. H2SO4}$ the initial Step is –',
         options: [{id: 'a', text: 'Formation of an ester'}, {id: 'b', text: 'Protonation of alcohol'}, {id: 'c', text: 'Formation of carbocation'}, {id: 'd', text: 'Elimination of water'}],
         correctOptionId: 'b'
       },
@@ -216,7 +216,7 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
       },
       {
         id: 'ct1_q11',
-        text: 'CH3CH2OH can be converted into CH3CHO by ______________.',
+        text: '$\\ce{CH3CH2OH}$ can be converted into $\\ce{CH3CHO}$ by ______________.',
         options: [{id: 'a', text: 'Catalytic hydrogenation'}, {id: 'b', text: 'Treatment with LiAlH4'}, {id: 'c', text: 'Treatment with pyridiniumchlorochromate (PCC)'}, {id: 'd', text: 'Treatment with KMnO4'}],
         correctOptionId: 'c'
       },
@@ -240,7 +240,7 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
       },
       {
         id: 'ct1_q14',
-        text: 'Which reagents can be used to oxidise primary alcohols to aldehydes? (i) CrO3, (ii) KMnO4, (iii) PCC, (iv) Cu at 573K.',
+        text: 'Which reagents can be used to oxidise primary alcohols to aldehydes? (i) $\\ce{CrO3}$, (ii) $\\ce{KMnO4}$, (iii) PCC, (iv) Cu at 573K.',
         options: [{id: 'a', text: '(i), (ii)'}, {id: 'b', text: '(iii), (iv)'}, {id: 'c', text: '(ii), (iii), (iv)'}, {id: 'd', text: '(i), (iii), (iv)'}],
         correctOptionId: 'd'
       },
@@ -261,11 +261,11 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
     questions: [
       {
         id: 'q3',
-        text: 'What is the derivative of x^2?',
+        text: 'What is the derivative of $x^2$?',
         options: [
           { id: 'a', text: 'x' },
           { id: 'b', text: '2x' },
-          { id: 'c', text: 'x^3 / 3' },
+          { id: 'c', text: '$\\frac{x^3}{3}$' },
           { id: 'd', text: '2' }
         ],
         correctOptionId: 'b'
