@@ -4,6 +4,7 @@ import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
 import { GoogleGenAI } from "@google/genai";
 import { FormattedText } from '../UI/FormattedText';
+import { MoleculeRenderer } from '../UI/MoleculeRenderer';
 
 interface SubmissionReviewProps {
   submission: Submission;
@@ -126,6 +127,21 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                 </div>
               )}
 
+              {q.smilesStrings && q.smilesStrings.length > 0 && (
+                <div className="mb-8 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {q.smilesStrings.map((smiles, sidx) => (
+                      <div key={sidx} className="flex flex-col items-center p-2 border border-gray-50 rounded-xl">
+                        <MoleculeRenderer smiles={smiles} width={120} height={120} />
+                        <span className="mt-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                          ({String.fromCharCode(65 + sidx)})
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Options Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {q.options.map((opt) => {
@@ -164,9 +180,9 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                       <span className="text-sm font-bold italic">Analyzing concept...</span>
                     </div>
                   ) : (
-                    <p className="text-[15px] text-gray-800 italic leading-relaxed whitespace-pre-line">
-                      "{aiExplanation}"
-                    </p>
+                    <div className="text-[15px] text-gray-800 italic leading-relaxed whitespace-pre-line">
+                      "<FormattedText text={aiExplanation} />"
+                    </div>
                   )}
                 </div>
               )}

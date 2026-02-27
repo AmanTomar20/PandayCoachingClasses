@@ -16,7 +16,10 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
   const [name, setName] = useState('');
+  const [mobile, setMobile] = useState('');
+  const [batch, setBatch] = useState('10th');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
@@ -27,7 +30,10 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onLoginSuccess }) => {
     setUsername('');
     setPassword('');
     setEmail('');
+    setEmailError('');
     setName('');
+    setMobile('');
+    setBatch('10th');
   };
 
   const handleRoleSelect = (role: Role) => {
@@ -45,6 +51,11 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onLoginSuccess }) => {
       const user = await storageService.findUserByCredentials(username, selectedRole || 'STUDENT');
       
       if (user && user.password === password) {
+        if (user.role === 'STUDENT' && user.isApproved === false) {
+          setError("Your account is pending teacher approval. Please check back later.");
+          setLoading(false);
+          return;
+        }
         onLoginSuccess(user);
       } else {
         setError(`Invalid ${selectedRole?.toLowerCase()} credentials.`);
@@ -56,14 +67,36 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onLoginSuccess }) => {
     }
   };
 
+  const validateEmail = (val: string) => {
+    setEmail(val);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (val && !emailRegex.test(val)) {
+      setEmailError('Invalid email format');
+    } else {
+      setEmailError('');
+    }
+  };
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      if (!name || !email || !username || !password) {
+      if (!name || !email || !username || !password || !mobile || !batch) {
         setError('All fields are required.');
+        return;
+      }
+
+      if (emailError) {
+        setError('Please fix the email format.');
+        return;
+      }
+
+      // Mobile validation: 10 digits, numbers only
+      const mobileRegex = /^[0-9]{10}$/;
+      if (!mobileRegex.test(mobile)) {
+        setError('Mobile number must be exactly 10 digits.');
         return;
       }
 
@@ -80,11 +113,14 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onLoginSuccess }) => {
         email,
         username,
         password,
-        role: 'STUDENT'
+        mobile,
+        batch,
+        role: 'STUDENT',
+        isApproved: false
       };
 
       await storageService.registerStudent(newStudent);
-      setSuccess('Registration successful! Please login.');
+      setSuccess('Registration successful! Your account is pending teacher approval.');
       setTimeout(() => {
         setStep('LOGIN');
         resetForm();
@@ -302,10 +338,43 @@ export const AuthFlow: React.FC<AuthFlowProps> = ({ onLoginSuccess }) => {
                     type="email" 
                     required
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-4 bg-gray-50 border-2 border-gray-100 focus:border-indigo-600 rounded-xl outline-none transition-all"
+                    onChange={(e) => validateEmail(e.target.value)}
+                    className={`w-full p-4 bg-gray-50 border-2 ${emailError ? 'border-red-500' : 'border-gray-100'} focus:border-indigo-600 rounded-xl outline-none transition-all`}
                     placeholder="rahul@example.com"
                   />
+                  {emailError && <p className="text-red-500 text-[10px] font-bold mt-1 uppercase tracking-wider">{emailError}</p>}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-500 uppercase mb-2">Mobile Number</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">+91</span>
+                      <input 
+                        type="text" 
+                        required
+                        maxLength={10}
+                        value={mobile}
+                        onChange={(e) => setMobile(e.target.value.replace(/\D/g, ''))}
+                        className="w-full p-4 pl-14 bg-gray-50 border-2 border-gray-100 focus:border-indigo-600 rounded-xl outline-none transition-all"
+                        placeholder="9876543210"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-bold text-gray-500 uppercase mb-2">Batch</label>
+                    <select 
+                      value={batch}
+                      onChange={(e) => setBatch(e.target.value)}
+                      className="w-full p-4 bg-gray-50 border-2 border-gray-100 focus:border-indigo-600 rounded-xl outline-none transition-all appearance-none cursor-pointer"
+                    >
+                      <option value="9th">9th Standard</option>
+                      <option value="10th">10th Standard</option>
+                      <option value="11th">11th Standard</option>
+                      <option value="12th">12th Standard</option>
+                      <option value="JEE Mains">JEE Mains</option>
+                      <option value="JEE Advance">JEE Advance</option>
+                    </select>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-sm font-bold text-gray-500 uppercase mb-2">Username</label>

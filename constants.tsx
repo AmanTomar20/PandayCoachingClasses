@@ -11,142 +11,12 @@ export const MOCK_TEACHER: User = {
 };
 
 export const MOCK_STUDENTS: User[] = [
-  { id: 's1', name: 'Aman Sharma', email: 'aman@example.com', username: 'aman', password: 'password123', role: 'STUDENT' },
-  { id: 's2', name: 'Priya Verma', email: 'priya@example.com', username: 'priya', password: 'password123', role: 'STUDENT' },
-  { id: 's3', name: 'Rohan Gupta', email: 'rohan@example.com', username: 'rohan', password: 'password123', role: 'STUDENT' },
+  { id: 's1', name: 'Aman Sharma', email: 'aman@example.com', username: 'aman', password: 'password123', role: 'STUDENT', isApproved: true },
+  { id: 's2', name: 'Priya Verma', email: 'priya@example.com', username: 'priya', password: 'password123', role: 'STUDENT', isApproved: true },
+  { id: 's3', name: 'Rohan Gupta', email: 'rohan@example.com', username: 'rohan', password: 'password123', role: 'STUDENT', isApproved: true },
 ];
 
 export const INITIAL_ASSESSMENTS: Assessment[] = [
-  {
-    id: 'p1',
-    title: 'Algebra Foundations - Set 1',
-    type: 'PRACTICE',
-    subject: 'Mathematics',
-    questions: [
-      {
-        id: 'q1',
-        text: 'What is the value of x in 2x + 5 = 15?',
-        options: [
-          { id: 'a', text: '5' },
-          { id: 'b', text: '10' },
-          { id: 'c', text: '2.5' },
-          { id: 'd', text: '5.5' }
-        ],
-        correctOptionId: 'a',
-        explanation: '2x = 15 - 5 => 2x = 10 => x = 5.'
-      },
-      {
-        id: 'q2',
-        text: 'Simplify: (x + 2)(x - 2)',
-        options: [
-          { id: 'a', text: 'x^2 + 4' },
-          { id: 'b', text: 'x^2 - 4' },
-          { id: 'c', text: 'x^2 - 4x + 4' },
-          { id: 'd', text: '2x' }
-        ],
-        correctOptionId: 'b',
-        explanation: 'This is the difference of squares formula: (a+b)(a-b) = a^2 - b^2.'
-      }
-    ]
-  },
-  {
-    id: 'chem_set_1',
-    title: 'Metals and Non-Metals - Set 1',
-    type: 'PRACTICE',
-    subject: 'Chemistry',
-    questions: [
-      {
-        id: 'c1',
-        text: 'Which of the following is a non-metal that is liquid at room temperature?',
-        options: [{id: 'a', text: 'Bromine'}, {id: 'b', text: 'Mercury'}, {id: 'c', text: 'Gallium'}, {id: 'd', text: 'Cesium'}],
-        correctOptionId: 'a'
-      },
-      {
-        id: 'c2',
-        text: 'Metals are good conductors of electricity because they have:',
-        options: [{id: 'a', text: 'Free neutrons'}, {id: 'b', text: 'Free protons'}, {id: 'c', text: 'Free electrons'}, {id: 'd', text: 'Positive ions'}],
-        correctOptionId: 'c'
-      },
-      {
-        id: 'c3',
-        text: 'Which metal does not react with dilute HCl?',
-        options: [{id: 'a', text: 'Magnesium'}, {id: 'b', text: 'Aluminium'}, {id: 'c', text: 'Zinc'}, {id: 'd', text: 'Copper'}],
-        correctOptionId: 'd'
-      },
-      {
-        id: 'c4',
-        text: 'When sodium reacts with water, the gas evolved is:',
-        options: [{id: 'a', text: 'Oxygen'}, {id: 'b', text: 'Hydrogen'}, {id: 'c', text: 'Nitrogen'}, {id: 'd', text: 'Carbon dioxide'}],
-        correctOptionId: 'b'
-      },
-      {
-        id: 'c5',
-        text: 'The nature of metal oxides is generally:',
-        options: [{id: 'a', text: 'Acidic'}, {id: 'b', text: 'Neutral'}, {id: 'c', text: 'Basic'}, {id: 'd', text: 'Amphoteric only'}],
-        correctOptionId: 'c'
-      },
-      {
-        id: 'c6',
-        text: 'Which of the following metal oxides is amphoteric?',
-        options: [{id: 'a', text: 'Na₂O'}, {id: 'b', text: 'MgO'}, {id: 'c', text: 'ZnO'}, {id: 'd', text: 'K₂O'}],
-        correctOptionId: 'c'
-      },
-      {
-        id: 'c7',
-        text: 'Which metal is stored in kerosene oil?',
-        options: [{id: 'a', text: 'Iron'}, {id: 'b', text: 'Sodium'}, {id: 'c', text: 'Copper'}, {id: 'd', text: 'Zinc'}],
-        correctOptionId: 'b'
-      },
-      {
-        id: 'c8',
-        text: 'The metal that can be cut with a knife is:',
-        options: [{id: 'a', text: 'Iron'}, {id: 'b', text: 'Copper'}, {id: 'c', text: 'Sodium'}, {id: 'd', text: 'Aluminium'}],
-        correctOptionId: 'c'
-      },
-      {
-        id: 'c9',
-        text: 'The green coating on copper utensils is:',
-        options: [{id: 'a', text: 'Copper oxide'}, {id: 'b', text: 'Copper sulphide'}, {id: 'c', text: 'Basic copper carbonate'}, {id: 'd', text: 'Copper nitrate'}],
-        correctOptionId: 'c'
-      },
-      {
-        id: 'c10',
-        text: 'Rust is chemically:',
-        options: [{id: 'a', text: 'Iron oxide'}, {id: 'b', text: 'Hydrated iron(III) oxide'}, {id: 'c', text: 'Iron carbonate'}, {id: 'd', text: 'Iron hydroxide'}],
-        correctOptionId: 'b'
-      },
-      {
-        id: 'c11',
-        text: 'The process of coating iron with zinc is called:',
-        options: [{id: 'a', text: 'Alloying'}, {id: 'b', text: 'Galvanisation'}, {id: 'c', text: 'Roasting'}, {id: 'd', text: 'Calcination'}],
-        correctOptionId: 'b'
-      },
-      {
-        id: 'c12',
-        text: 'Which of the following metals is most reactive?',
-        options: [{id: 'a', text: 'Fe'}, {id: 'b', text: 'Cu'}, {id: 'c', text: 'K'}, {id: 'd', text: 'Ag'}],
-        correctOptionId: 'c'
-      },
-      {
-        id: 'c13',
-        text: 'Ionic compounds have high melting point because:',
-        options: [{id: 'a', text: 'They are covalent'}, {id: 'b', text: 'Strong electrostatic force of attraction exists'}, {id: 'c', text: 'They are soft'}, {id: 'd', text: 'They contain hydrogen bonds'}],
-        correctOptionId: 'b'
-      },
-      {
-        id: 'c14',
-        text: 'Which of the following can displace copper from CuSO₄ solution?',
-        options: [{id: 'a', text: 'Silver'}, {id: 'b', text: 'Gold'}, {id: 'c', text: 'Zinc'}, {id: 'd', text: 'Platinum'}],
-        correctOptionId: 'c'
-      },
-      {
-        id: 'c15',
-        text: 'The extraction of metals from sulphide ores is done by:',
-        options: [{id: 'a', text: 'Reduction'}, {id: 'b', text: 'Roasting'}, {id: 'c', text: 'Electrolysis'}, {id: 'd', text: 'Distillation'}],
-        correctOptionId: 'b'
-      }
-    ]
-  },
   {
     id: 'chem_test_set_1',
     title: 'Chemistry Unit Test - Set 1',
@@ -223,7 +93,12 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
       {
         id: 'ct1_q12',
         text: 'Which of the following compounds is a Benzylic alcohol?',
-        imageUrl: 'https://lh3.googleusercontent.com/d/1YDbfGUd6q85EhRJgbN4kBnR2OnzNPTAi',
+        smilesStrings: [
+          'Oc1ccccc1', // (A) Phenol
+          'OCc1ccccc1', // (B) Benzyl alcohol
+          'OCc1cccc(C)c1', // (C) 3-methylbenzyl alcohol
+          'Oc1cccc(C)c1' // (D) 3-methylphenol
+        ],
         options: [{id: 'a', text: 'A, B, C, D'}, {id: 'b', text: 'A, D'}, {id: 'c', text: 'B, C'}, {id: 'd', text: 'A'}],
         correctOptionId: 'c'
       },
@@ -253,44 +128,115 @@ export const INITIAL_ASSESSMENTS: Assessment[] = [
     ]
   },
   {
-    id: 't1',
-    title: 'Final Mathematics Unit Test',
-    type: 'TEST',
-    subject: 'Mathematics',
-    durationMinutes: 30,
+    id: 'chem_practice_metals',
+    title: 'Metals and Non-Metals - Practice Set',
+    type: 'PRACTICE',
+    subject: 'Chemistry',
     questions: [
       {
-        id: 'q3',
-        text: 'What is the derivative of $x^2$?',
-        options: [
-          { id: 'a', text: 'x' },
-          { id: 'b', text: '2x' },
-          { id: 'c', text: '$\\frac{x^3}{3}$' },
-          { id: 'd', text: '2' }
-        ],
-        correctOptionId: 'b'
+        id: 'm1',
+        text: 'Which of the following is a non-metal that is liquid at room temperature?',
+        options: [{id: 'a', text: 'Bromine'}, {id: 'b', text: 'Mercury'}, {id: 'c', text: 'Gallium'}, {id: 'd', text: 'Cesium'}],
+        correctOptionId: 'a',
+        explanation: 'Bromine is the only non-metal that exists as a liquid at room temperature. Mercury is a metal that is liquid at room temperature.'
       },
       {
-        id: 'q4',
-        text: 'Value of sin(90°)?',
-        options: [
-          { id: 'a', text: '0' },
-          { id: 'b', text: '1' },
-          { id: 'c', text: '0.5' },
-          { id: 'd', text: 'Undefined' }
-        ],
-        correctOptionId: 'b'
+        id: 'm2',
+        text: 'Metals are good conductors of electricity because they have:',
+        options: [{id: 'a', text: 'Free neutrons'}, {id: 'b', text: 'Free protons'}, {id: 'c', text: 'Free electrons'}, {id: 'd', text: 'Positive ions'}],
+        correctOptionId: 'c',
+        explanation: 'Metals have a "sea" of delocalized free electrons that can move through the lattice, carrying electrical charge.'
       },
       {
-        id: 'q5',
-        text: 'Sum of angles in a triangle is:',
-        options: [
-          { id: 'a', text: '90°' },
-          { id: 'b', text: '180°' },
-          { id: 'c', text: '360°' },
-          { id: 'd', text: '270°' }
-        ],
-        correctOptionId: 'b'
+        id: 'm3',
+        text: 'Which metal does not react with $\\ce{dilute HCl}$?',
+        options: [{id: 'a', text: 'Magnesium'}, {id: 'b', text: 'Aluminium'}, {id: 'c', text: 'Zinc'}, {id: 'd', text: 'Copper'}],
+        correctOptionId: 'd',
+        explanation: 'Copper is below hydrogen in the reactivity series, so it cannot displace hydrogen from $\\ce{dilute acids}$ like $\\ce{HCl}$.'
+      },
+      {
+        id: 'm4',
+        text: 'When sodium reacts with water, the gas evolved is:',
+        options: [{id: 'a', text: 'Oxygen'}, {id: 'b', text: 'Hydrogen'}, {id: 'c', text: 'Nitrogen'}, {id: 'd', text: 'Carbon dioxide'}],
+        correctOptionId: 'b',
+        explanation: 'Sodium reacts vigorously with water to form sodium hydroxide and hydrogen gas: $\\ce{2Na + 2H2O -> 2NaOH + H2}$.'
+      },
+      {
+        id: 'm5',
+        text: 'The nature of metal oxides is generally:',
+        options: [{id: 'a', text: 'Acidic'}, {id: 'b', text: 'Neutral'}, {id: 'c', text: 'Basic'}, {id: 'd', text: 'Amphoteric only'}],
+        correctOptionId: 'c',
+        explanation: 'Most metal oxides are basic in nature as they react with water to form bases or with acids to form salts and water.'
+      },
+      {
+        id: 'm6',
+        text: 'Which of the following metal oxides is amphoteric?',
+        options: [{id: 'a', text: '$\\ce{Na2O}$'}, {id: 'b', text: '$\\ce{MgO}$'}, {id: 'c', text: '$\\ce{ZnO}$'}, {id: 'd', text: '$\\ce{K2O}$'}],
+        correctOptionId: 'c',
+        explanation: 'Amphoteric oxides like $\\ce{ZnO}$ and $\\ce{Al2O3}$ can react with both acids and bases to form salts and water.'
+      },
+      {
+        id: 'm7',
+        text: 'Which metal is stored in kerosene oil?',
+        options: [{id: 'a', text: 'Iron'}, {id: 'b', text: 'Sodium'}, {id: 'c', text: 'Copper'}, {id: 'd', text: 'Zinc'}],
+        correctOptionId: 'b',
+        explanation: 'Sodium is highly reactive and reacts explosively with air and moisture, so it is stored under kerosene to prevent contact.'
+      },
+      {
+        id: 'm8',
+        text: 'The metal that can be cut with a knife is:',
+        options: [{id: 'a', text: 'Iron'}, {id: 'b', text: 'Copper'}, {id: 'c', text: 'Sodium'}, {id: 'd', text: 'Aluminium'}],
+        correctOptionId: 'c',
+        explanation: 'Alkali metals like Sodium, Potassium, and Lithium are very soft and can be easily cut with a knife.'
+      },
+      {
+        id: 'm9',
+        text: 'The green coating on copper utensils is:',
+        options: [{id: 'a', text: 'Copper oxide'}, {id: 'b', text: 'Copper sulphide'}, {id: 'c', text: 'Basic copper carbonate'}, {id: 'd', text: 'Copper nitrate'}],
+        correctOptionId: 'c',
+        explanation: 'Copper reacts with moist $\\ce{CO2}$ in the air to form a green layer of basic copper carbonate $\\ce{[CuCO3.Cu(OH)2]}$.'
+      },
+      {
+        id: 'm10',
+        text: 'Rust is chemically:',
+        options: [{id: 'a', text: 'Iron oxide'}, {id: 'b', text: 'Hydrated iron(III) oxide'}, {id: 'c', text: 'Iron carbonate'}, {id: 'd', text: 'Iron hydroxide'}],
+        correctOptionId: 'b',
+        explanation: 'Rust is the hydrated form of iron(III) oxide, represented by the formula $\\ce{Fe2O3.xH2O}$.'
+      },
+      {
+        id: 'm11',
+        text: 'The process of coating iron with zinc is called:',
+        options: [{id: 'a', text: 'Alloying'}, {id: 'b', text: 'Galvanisation'}, {id: 'c', text: 'Roasting'}, {id: 'd', text: 'Calcination'}],
+        correctOptionId: 'b',
+        explanation: 'Galvanisation is the process of applying a protective zinc coating to iron or steel to prevent rusting.'
+      },
+      {
+        id: 'm12',
+        text: 'Which of the following metals is most reactive?',
+        options: [{id: 'a', text: '$\\ce{Fe}$'}, {id: 'b', text: '$\\ce{Cu}$'}, {id: 'c', text: '$\\ce{K}$'}, {id: 'd', text: '$\\ce{Ag}$'}],
+        correctOptionId: 'c',
+        explanation: 'Potassium (K) is at the top of the reactivity series among the given options, making it the most reactive.'
+      },
+      {
+        id: 'm13',
+        text: 'Ionic compounds have high melting point because:',
+        options: [{id: 'a', text: 'They are covalent'}, {id: 'b', text: 'Strong electrostatic force of attraction exists'}, {id: 'c', text: 'They are soft'}, {id: 'd', text: 'They contain hydrogen bonds'}],
+        correctOptionId: 'b',
+        explanation: 'Ionic compounds consist of ions held together by strong electrostatic forces, requiring significant energy to break the lattice.'
+      },
+      {
+        id: 'm14',
+        text: 'Which of the following can displace copper from $\\ce{CuSO4}$ solution?',
+        options: [{id: 'a', text: 'Silver'}, {id: 'b', text: 'Gold'}, {id: 'c', text: 'Zinc'}, {id: 'd', text: 'Platinum'}],
+        correctOptionId: 'c',
+        explanation: 'Zinc is more reactive than copper and can displace it from its salt solution in a single displacement reaction.'
+      },
+      {
+        id: 'm15',
+        text: 'The extraction of metals from sulphide ores is done by:',
+        options: [{id: 'a', text: 'Reduction'}, {id: 'b', text: 'Roasting'}, {id: 'c', text: 'Electrolysis'}, {id: 'd', text: 'Distillation'}],
+        correctOptionId: 'b',
+        explanation: 'Roasting is the process of heating sulphide ores strongly in the presence of excess air to convert them into oxides.'
       }
     ]
   }

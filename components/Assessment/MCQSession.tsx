@@ -4,6 +4,7 @@ import { Assessment, Submission, Question } from '../../types';
 import { Card } from '../UI/Card';
 import { GoogleGenAI } from "@google/genai";
 import { FormattedText } from '../UI/FormattedText';
+import { MoleculeRenderer } from '../UI/MoleculeRenderer';
 
 interface MCQSessionProps {
   assessment: Assessment;
@@ -309,6 +310,21 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
             </div>
           )}
 
+          {currentQuestion.smilesStrings && currentQuestion.smilesStrings.length > 0 && (
+            <div className="mb-8 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {currentQuestion.smilesStrings.map((smiles, idx) => (
+                  <div key={idx} className="flex flex-col items-center p-2 border border-gray-50 rounded-xl hover:bg-gray-50 transition-colors">
+                    <MoleculeRenderer smiles={smiles} width={150} height={150} />
+                    <span className="mt-2 text-xs font-black text-gray-400 uppercase tracking-widest">
+                      ({String.fromCharCode(65 + idx)})
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="space-y-4">
             {currentQuestion.options.map((option) => (
               <button
@@ -331,7 +347,9 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
           {isRevealed && currentQuestion.explanation && (
             <div className="mt-8 p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded animate-in fade-in slide-in-from-top-2 duration-300">
               <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Explanation</p>
-              <p className="text-indigo-900">{currentQuestion.explanation}</p>
+              <div className="text-indigo-900">
+                <FormattedText text={currentQuestion.explanation} />
+              </div>
             </div>
           )}
         </div>

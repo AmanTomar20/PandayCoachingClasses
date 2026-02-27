@@ -8,6 +8,9 @@ export interface User {
   role: Role;
   password?: string;
   username?: string;
+  mobile?: string;
+  batch?: string;
+  isApproved?: boolean;
 }
 
 export interface MCQOption {
@@ -22,6 +25,7 @@ export interface Question {
   correctOptionId: string;
   explanation?: string;
   imageUrl?: string;
+  smilesStrings?: string[];
 }
 
 export type AssessmentType = 'PRACTICE' | 'TEST';

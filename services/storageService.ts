@@ -44,13 +44,44 @@ export const storageService = {
 
   getAllStudents: async (): Promise<User[]> => {
     try {
-      const q = query(collection(db, COLLECTIONS.USERS), where("role", "==", "STUDENT"));
+      const q = query(
+        collection(db, COLLECTIONS.USERS), 
+        where("role", "==", "STUDENT"),
+        where("isApproved", "==", true)
+      );
       const querySnapshot = await getDocs(q);
       return querySnapshot.docs.map(doc => doc.data() as User);
     } catch (e) {
       console.error("Error getting students:", e);
       return [];
     }
+  },
+
+  getPendingStudents: async (): Promise<User[]> => {
+    try {
+      const q = query(
+        collection(db, COLLECTIONS.USERS), 
+        where("role", "==", "STUDENT"),
+        where("isApproved", "==", false)
+      );
+      const querySnapshot = await getDocs(q);
+      return querySnapshot.docs.map(doc => doc.data() as User);
+    } catch (e) {
+      console.error("Error getting pending students:", e);
+      return [];
+    }
+  },
+
+  approveStudent: async (studentId: string): Promise<void> => {
+    const docRef = doc(db, COLLECTIONS.USERS, studentId);
+    await setDoc(docRef, { isApproved: true }, { merge: true });
+  },
+
+  rejectStudent: async (studentId: string): Promise<void> => {
+    // For rejection, we can just delete the user document or mark as rejected
+    // Deleting is simpler for this flow
+    const { deleteDoc } = await import("firebase/firestore");
+    await deleteDoc(doc(db, COLLECTIONS.USERS, studentId));
   },
 
   registerStudent: async (student: User): Promise<void> => {

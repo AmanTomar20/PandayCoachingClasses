@@ -5,18 +5,20 @@ import { Card } from '../UI/Card';
 import { storageService } from '../../services/storageService';
 import { GoogleGenAI, Type } from "@google/genai";
 import { FormattedText } from '../UI/FormattedText';
+import { MoleculeRenderer } from '../UI/MoleculeRenderer';
 
 interface TeacherDashboardProps {
   user: User;
   assessments: Assessment[];
 }
 
-type DashboardTab = 'ANALYTICS' | 'AI_CREATOR' | 'MANAGE';
+type DashboardTab = 'ANALYTICS' | 'AI_CREATOR' | 'MANAGE' | 'APPROVALS';
 
 export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments: propAssessments }) => {
   const [assessments, setAssessments] = useState<Assessment[]>(propAssessments);
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [students, setStudents] = useState<User[]>([]);
+  const [pendingStudents, setPendingStudents] = useState<User[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<DashboardTab>('ANALYTICS');
@@ -41,14 +43,16 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
   const loadData = async () => {
     try {
       setLoading(true);
-      const [allSubmissions, allStudents, allAssessments] = await Promise.all([
+      const [allSubmissions, allStudents, allAssessments, allPending] = await Promise.all([
         storageService.getSubmissions(),
         storageService.getAllStudents(),
-        storageService.getAssessments()
+        storageService.getAssessments(),
+        storageService.getPendingStudents()
       ]);
       setSubmissions(allSubmissions);
       setStudents(allStudents);
       setAssessments(allAssessments);
+      setPendingStudents(allPending);
     } catch (err) {
       console.error("Error loading teacher data:", err);
     } finally {
@@ -183,6 +187,25 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
       alert(`Save Error: ${err.message}`);
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleApprove = async (studentId: string) => {
+    try {
+      await storageService.approveStudent(studentId);
+      await loadData();
+    } catch (err) {
+      console.error("Error approving student:", err);
+    }
+  };
+
+  const handleReject = async (studentId: string) => {
+    if (!confirm("Are you sure you want to reject and delete this student's registration?")) return;
+    try {
+      await storageService.rejectStudent(studentId);
+      await loadData();
+    } catch (err) {
+      console.error("Error rejecting student:", err);
     }
   };
 
@@ -347,6 +370,20 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                     )}
                   </div>
 
+                  {q.smilesStrings && q.smilesStrings.length > 0 && (
+                    <div className="mt-6 p-6 bg-white border border-gray-100 rounded-3xl shadow-sm">
+                      <label className="block text-[10px] font-black text-gray-400 uppercase mb-4">Molecular Structures (SMILES)</label>
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {q.smilesStrings.map((smiles, sidx) => (
+                          <div key={sidx} className="flex flex-col items-center p-2 border border-gray-50 rounded-xl bg-gray-50/30">
+                            <MoleculeRenderer smiles={smiles} width={100} height={100} />
+                            <span className="mt-2 text-[9px] font-black text-gray-300 uppercase">({String.fromCharCode(65 + sidx)})</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <label className="block text-[10px] font-black text-gray-400 uppercase mb-4">Options & Correct Answer</label>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -464,6 +501,17 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
             Manage Sets
           </button>
           <button 
+            onClick={() => setActiveTab('APPROVALS')}
+            className={`px-6 py-2 rounded-xl font-bold text-sm transition-all whitespace-nowrap relative ${activeTab === 'APPROVALS' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-500 hover:text-indigo-600'}`}
+          >
+            Approvals
+            {pendingStudents.length > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full border-2 border-white animate-pulse">
+                {pendingStudents.length}
+              </span>
+            )}
+          </button>
+          <button 
             onClick={() => setActiveTab('AI_CREATOR')}
             className={`px-6 py-2 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${activeTab === 'AI_CREATOR' ? 'bg-indigo-600 text-white shadow-md' : 'text-gray-500 hover:text-indigo-600'}`}
           >
@@ -471,6 +519,71 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
           </button>
         </div>
       </header>
+
+      {activeTab === 'APPROVALS' && (
+        <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+          <div className="mb-8">
+            <h2 className="text-2xl font-black text-gray-900">Pending Approvals</h2>
+            <p className="text-gray-500">Review and approve new student registrations.</p>
+          </div>
+
+          {pendingStudents.length === 0 ? (
+            <div className="bg-white p-12 rounded-3xl border border-gray-100 text-center shadow-sm">
+              <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i className="fa-solid fa-check-double text-3xl"></i>
+              </div>
+              <h3 className="text-xl font-bold text-gray-800 mb-2">All caught up!</h3>
+              <p className="text-gray-500">There are no pending student registrations at the moment.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {pendingStudents.map(student => (
+                <div key={student.id} className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm hover:shadow-md transition-all">
+                  <div className="flex items-center gap-4 mb-6">
+                    <div className="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl">
+                      {student.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h4 className="font-black text-gray-900">{student.name}</h4>
+                      <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">{student.batch} Batch</p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-3 mb-8">
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <i className="fa-solid fa-envelope w-5 text-indigo-400"></i>
+                      <span className="truncate">{student.email}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <i className="fa-solid fa-phone w-5 text-indigo-400"></i>
+                      <span>+91 {student.mobile}</span>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      <i className="fa-solid fa-user w-5 text-indigo-400"></i>
+                      <span>@{student.username}</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <button 
+                      onClick={() => handleReject(student.id)}
+                      className="py-3 rounded-xl border-2 border-red-50 text-red-500 font-bold text-sm hover:bg-red-50 transition-all"
+                    >
+                      Reject
+                    </button>
+                    <button 
+                      onClick={() => handleApprove(student.id)}
+                      className="py-3 rounded-xl bg-indigo-600 text-white font-bold text-sm hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95"
+                    >
+                      Approve
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       {activeTab === 'ANALYTICS' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -743,6 +856,19 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                         </div>
                       )}
 
+                      {q.smilesStrings && q.smilesStrings.length > 0 && (
+                        <div className="mb-6 p-4 bg-white border border-gray-100 rounded-xl shadow-sm">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                            {q.smilesStrings.map((smiles, sidx) => (
+                              <div key={sidx} className="flex flex-col items-center p-1 border border-gray-50 rounded-lg">
+                                <MoleculeRenderer smiles={smiles} width={80} height={80} />
+                                <span className="text-[8px] font-black text-gray-300 uppercase">({String.fromCharCode(65 + sidx)})</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       <div className="grid grid-cols-2 gap-2">
                         {q.options?.map((opt: any) => (
                           <div key={opt.id} className={`p-3 rounded-lg text-xs font-medium border ${opt.id === q.correctOptionId ? 'bg-emerald-50 border-emerald-200 text-emerald-700 font-bold' : 'bg-white border-gray-100 text-gray-500'}`}>
@@ -752,7 +878,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                       </div>
                       {q.explanation && (
                          <div className="mt-4 p-4 bg-white border border-indigo-50 rounded-xl text-[11px] text-indigo-400 italic">
-                            <span className="font-black uppercase not-italic mr-2 text-indigo-600">Hint:</span> {q.explanation}
+                            <span className="font-black uppercase not-italic mr-2 text-indigo-600">Hint:</span> <FormattedText text={q.explanation} />
                          </div>
                       )}
                     </div>
