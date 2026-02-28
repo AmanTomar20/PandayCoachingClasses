@@ -64,14 +64,14 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
         <div>
           <button 
             onClick={onClose}
-            className="flex items-center gap-2 text-indigo-600 font-bold mb-4 hover:translate-x-[-4px] transition-transform"
+            className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 font-bold mb-4 hover:translate-x-[-4px] transition-transform"
           >
             <i className="fa-solid fa-arrow-left"></i> Back to Dashboard
           </button>
-          <h2 className="text-3xl font-black text-gray-900">Review: {assessment.title}</h2>
-          <p className="text-gray-500 font-medium">Completed on {new Date(submission.completedAt).toLocaleDateString()}</p>
+          <h2 className="text-3xl font-black text-gray-900 dark:text-white">Review: {assessment.title}</h2>
+          <p className="text-gray-500 dark:text-gray-400 font-medium">Completed on {new Date(submission.completedAt).toLocaleDateString()}</p>
         </div>
-        <Card className="!bg-indigo-600 text-white !p-4 flex items-center gap-6 shadow-lg shadow-indigo-100">
+        <Card className="!bg-indigo-600 text-white !p-4 flex items-center gap-6 shadow-lg shadow-indigo-100 dark:shadow-none">
            <div className="text-center">
               <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Final Score</p>
               <p className="text-3xl font-black">{submission.score} / {submission.totalQuestions}</p>
@@ -93,17 +93,17 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
           const isAiLoading = aiLoadingIds[q.id];
 
           return (
-            <div key={q.id} className={`bg-white rounded-3xl shadow-sm border ${isSubj ? 'border-indigo-100' : (isCorrect ? 'border-indigo-100' : 'border-red-100')} p-8 relative transition-all hover:shadow-md`}>
+            <div key={q.id} className={`bg-white dark:bg-gray-800 rounded-3xl shadow-sm border ${isSubj ? 'border-indigo-100 dark:border-indigo-900/50' : (isCorrect ? 'border-indigo-100 dark:border-indigo-900/50' : 'border-red-100 dark:border-red-900/50')} p-8 relative transition-all hover:shadow-md`}>
               {/* Question Header */}
               <div className="flex items-start gap-4 mb-6">
-                <div className={`w-8 h-8 min-w-[32px] rounded-lg flex items-center justify-center font-black text-sm ${isSubj ? 'bg-indigo-100 text-indigo-600' : (isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600')}`}>
+                <div className={`w-8 h-8 min-w-[32px] rounded-lg flex items-center justify-center font-black text-sm ${isSubj ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : (isCorrect ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400')}`}>
                   {idx + 1}
                 </div>
                 <div className="flex-grow pr-32">
-                  <h4 className="text-xl font-bold text-gray-800 leading-tight mb-3">
+                  <h4 className="text-xl font-bold text-gray-800 dark:text-white leading-tight mb-3">
                     <FormattedText text={q.text} />
                   </h4>
-                  <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${isSubj ? 'bg-indigo-100 text-indigo-600' : (isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600')}`}>
+                  <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${isSubj ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400' : (isCorrect ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400' : 'bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400')}`}>
                     {isSubj ? 'SUBJECTIVE' : (isCorrect ? 'CORRECT' : 'INCORRECT')}
                   </span>
                 </div>
@@ -113,7 +113,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                   <div className="absolute top-8 right-8">
                     <button 
                       onClick={() => handleAskGemini(q)}
-                      className="flex flex-col items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white w-24 h-16 rounded-2xl border-4 border-indigo-100 transition-all active:scale-95 shadow-lg shadow-indigo-100 group"
+                      className="flex flex-col items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white w-24 h-16 rounded-2xl border-4 border-indigo-100 dark:border-indigo-900 transition-all active:scale-95 shadow-lg shadow-indigo-100 dark:shadow-none group"
                     >
                       <span className="text-[10px] font-black uppercase tracking-tighter leading-none group-hover:scale-105 transition-transform">ASK AI</span>
                       <span className="text-[10px] font-black uppercase tracking-tighter leading-none group-hover:scale-105 transition-transform">TUTOR</span>
@@ -124,7 +124,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
 
               {/* Question Image */}
               {q.imageUrl && (
-                <div className="mb-8 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm flex justify-center">
+                <div className="mb-8 p-6 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-2xl shadow-sm flex justify-center">
                   <img 
                     src={q.imageUrl} 
                     alt="Question Diagram" 
@@ -137,12 +137,12 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
               )}
 
               {q.smilesStrings && q.smilesStrings.length > 0 && (
-                <div className="mb-8 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+                <div className="mb-8 p-6 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-2xl shadow-sm">
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     {q.smilesStrings.map((smiles, sidx) => (
-                      <div key={sidx} className="flex flex-col items-center p-2 border border-gray-50 rounded-xl">
+                      <div key={sidx} className="flex flex-col items-center p-2 border border-gray-50 dark:border-gray-600 rounded-xl">
                         <MoleculeRenderer smiles={smiles} width={120} height={120} />
-                        <span className="mt-2 text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                        <span className="mt-2 text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                           ({String.fromCharCode(65 + sidx)})
                         </span>
                       </div>
@@ -153,9 +153,9 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
 
               {/* Options Grid or Model Answer */}
               {isSubj ? (
-                <div className="mb-6 p-6 bg-green-50 border-l-4 border-green-500 rounded-2xl">
-                  <p className="text-[11px] font-black text-green-700 uppercase tracking-widest mb-2">Model Answer</p>
-                  <div className="text-green-900 leading-relaxed">
+                <div className="mb-6 p-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 rounded-2xl">
+                  <p className="text-[11px] font-black text-green-700 dark:text-green-400 uppercase tracking-widest mb-2">Model Answer</p>
+                  <div className="text-green-900 dark:text-green-200 leading-relaxed">
                     <FormattedText text={q.explanation || "No model answer provided."} />
                   </div>
                 </div>
@@ -165,14 +165,14 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                     const isOptSelected = userSelectedId === opt.id;
                     const isOptCorrect = q.correctOptionId === opt.id;
                     
-                    let containerStyle = "border-gray-100 bg-gray-50/50 text-gray-500";
+                    let containerStyle = "border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/30 text-gray-500 dark:text-gray-400";
                     let icon = null;
 
                     if (isOptCorrect) {
-                      containerStyle = "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-4 ring-emerald-50";
+                      containerStyle = "border-emerald-500 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-800 dark:text-emerald-200 font-bold ring-4 ring-emerald-50 dark:ring-emerald-900/20";
                       icon = <i className="fa-solid fa-circle-check text-emerald-500 ml-auto"></i>;
                     } else if (isOptSelected && !isOptCorrect) {
-                      containerStyle = "border-red-500 bg-red-50 text-red-800 font-bold ring-4 ring-red-50";
+                      containerStyle = "border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 font-bold ring-4 ring-red-50 dark:ring-red-900/20";
                       icon = <i className="fa-solid fa-circle-xmark text-red-500 ml-auto"></i>;
                     }
 
@@ -188,17 +188,17 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
 
               {/* AI Tutor Insights Section */}
               {(aiExplanation || isAiLoading) && (
-                <div className="mt-6 p-8 bg-[#F5F3FF] rounded-3xl border border-[#E0E7FF] animate-in fade-in slide-in-from-top-4 duration-500">
+                <div className="mt-6 p-8 bg-[#F5F3FF] dark:bg-violet-900/20 rounded-3xl border border-[#E0E7FF] dark:border-violet-800 animate-in fade-in slide-in-from-top-4 duration-500">
                   <div className="flex items-center gap-3 mb-3">
-                    <p className="text-[11px] font-black text-violet-600 uppercase tracking-widest">AI Tutor Insights</p>
+                    <p className="text-[11px] font-black text-violet-600 dark:text-violet-400 uppercase tracking-widest">AI Tutor Insights</p>
                   </div>
                   {isAiLoading ? (
-                    <div className="flex items-center gap-3 text-violet-600 animate-pulse">
-                      <div className="w-2 h-2 bg-violet-600 rounded-full animate-bounce"></div>
+                    <div className="flex items-center gap-3 text-violet-600 dark:text-violet-400 animate-pulse">
+                      <div className="w-2 h-2 bg-violet-600 dark:bg-violet-400 rounded-full animate-bounce"></div>
                       <span className="text-sm font-bold italic">Analyzing concept...</span>
                     </div>
                   ) : (
-                    <div className="text-[15px] text-gray-800 italic leading-relaxed whitespace-pre-line">
+                    <div className="text-[15px] text-gray-800 dark:text-gray-200 italic leading-relaxed whitespace-pre-line">
                       "<FormattedText text={aiExplanation} />"
                     </div>
                   )}
@@ -212,7 +212,7 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
       <div className="mt-16 flex justify-center px-4">
         <button 
           onClick={onClose}
-          className="w-full md:w-auto px-16 py-5 bg-indigo-600 text-white rounded-3xl font-black uppercase tracking-widest shadow-2xl shadow-indigo-200 hover:bg-indigo-700 hover:scale-[1.02] transition-all active:scale-95"
+          className="w-full md:w-auto px-16 py-5 bg-indigo-600 text-white rounded-3xl font-black uppercase tracking-widest shadow-2xl shadow-indigo-200 dark:shadow-none hover:bg-indigo-700 hover:scale-[1.02] transition-all active:scale-95"
         >
           Return to Performance Center
         </button>

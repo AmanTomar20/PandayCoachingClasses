@@ -125,19 +125,19 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
 
     if (!revealed) {
       return isSelected 
-        ? 'border-indigo-600 bg-indigo-50 text-indigo-800' 
-        : 'border-gray-100 hover:border-indigo-200 bg-gray-50 text-gray-700';
+        ? 'border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-800 dark:text-indigo-200' 
+        : 'border-gray-100 dark:border-gray-700 hover:border-indigo-200 dark:hover:border-indigo-800 bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300';
     }
 
     if (isCorrect) {
-      return 'border-green-500 bg-green-50 text-green-800 font-bold';
+      return 'border-green-500 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 font-bold';
     }
 
     if (isSelected && !isCorrect) {
-      return 'border-red-500 bg-red-50 text-red-800 font-bold';
+      return 'border-red-500 bg-red-50 dark:bg-red-900/30 text-red-800 dark:text-red-200 font-bold';
     }
 
-    return 'border-gray-100 bg-gray-50 opacity-50 text-gray-400';
+    return 'border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 opacity-50 text-gray-400 dark:text-gray-500';
   };
 
   // --- REVIEW MODE UI ---
@@ -146,23 +146,23 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
       <div className="max-w-3xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <span className="px-2 py-1 bg-red-100 text-red-700 text-[10px] font-black uppercase rounded mb-2 inline-block">Reviewing Mistakes</span>
-            <h2 className="text-2xl font-bold text-gray-800">{assessment.title}</h2>
-            <p className="text-gray-500">Mistake {reviewIndex + 1} of {incorrectQuestions.length}</p>
+            <span className="px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-[10px] font-black uppercase rounded mb-2 inline-block">Reviewing Mistakes</span>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{assessment.title}</h2>
+            <p className="text-gray-500 dark:text-gray-400">Mistake {reviewIndex + 1} of {incorrectQuestions.length}</p>
           </div>
-          <button onClick={() => { setIsReviewing(false); setAiExplanation(null); }} className="text-gray-400 hover:text-indigo-600 font-bold flex items-center gap-2">
+          <button onClick={() => { setIsReviewing(false); setAiExplanation(null); }} className="text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 font-bold flex items-center gap-2 transition-colors">
             Back <i className="fa-solid fa-arrow-turn-up"></i>
           </button>
         </div>
 
-        <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden mb-6">
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden mb-6 transition-colors">
            <div className="p-8">
-            <p className="text-xl text-gray-800 font-medium mb-6">
+            <p className="text-xl text-gray-800 dark:text-white font-medium mb-6">
               <FormattedText text={currentReviewQuestion.text} />
             </p>
             
             {currentReviewQuestion.imageUrl && (
-              <div className="mb-8 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
+              <div className="mb-8 p-4 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl shadow-sm flex justify-center">
                 <img 
                   src={currentReviewQuestion.imageUrl} 
                   alt="Question Diagram" 
@@ -176,10 +176,10 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
 
             <div className="space-y-4">
               {currentReviewQuestion.options.map((option) => (
-                <div key={option.id} className={`w-full p-4 rounded-xl border-2 flex items-center gap-4 ${getOptionStyles(currentReviewQuestion, option.id)}`}>
+                <div key={option.id} className={`w-full p-4 rounded-xl border-2 flex items-center gap-4 transition-colors ${getOptionStyles(currentReviewQuestion, option.id)}`}>
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                     responses[currentReviewQuestion.id] === option.id ? 'border-red-500 bg-red-500' : 
-                    currentReviewQuestion.correctOptionId === option.id ? 'border-green-500 bg-green-500' : 'border-gray-300'
+                    currentReviewQuestion.correctOptionId === option.id ? 'border-green-500 bg-green-500' : 'border-gray-300 dark:border-gray-600'
                   }`}>
                     {(responses[currentReviewQuestion.id] === option.id || currentReviewQuestion.correctOptionId === option.id) && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
@@ -190,15 +190,15 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
             
             <div className="mt-8 grid grid-cols-1 gap-4">
               {currentReviewQuestion.explanation && (
-                <div className="p-4 bg-indigo-50 border-l-4 border-indigo-400 rounded">
-                  <p className="text-sm font-bold text-indigo-700 uppercase mb-1">Standard Hint</p>
-                  <p className="text-indigo-900">{currentReviewQuestion.explanation}</p>
+                <div className="p-4 bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-400 rounded">
+                  <p className="text-sm font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1">Standard Hint</p>
+                  <p className="text-indigo-900 dark:text-indigo-200">{currentReviewQuestion.explanation}</p>
                 </div>
               )}
 
-              <div className="p-4 bg-violet-50 border-l-4 border-violet-400 rounded">
+              <div className="p-4 bg-violet-50 dark:bg-violet-900/20 border-l-4 border-violet-400 rounded">
                 <div className="flex justify-between items-center mb-2">
-                  <p className="text-sm font-bold text-violet-700 uppercase">Gemini AI Tutor</p>
+                  <p className="text-sm font-bold text-violet-700 dark:text-violet-400 uppercase">Gemini AI Tutor</p>
                   {!aiExplanation && !isAiLoading && (
                     <button 
                       onClick={() => handleAskGemini(currentReviewQuestion)}
@@ -209,23 +209,23 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
                   )}
                 </div>
                 {isAiLoading ? (
-                  <div className="flex items-center gap-2 text-violet-600 animate-pulse">
+                  <div className="flex items-center gap-2 text-violet-600 dark:text-violet-400 animate-pulse">
                     <i className="fa-solid fa-sparkles"></i>
                     <span className="text-sm font-bold">Gemini is thinking...</span>
                   </div>
                 ) : aiExplanation ? (
-                  <p className="text-violet-900 text-sm italic leading-relaxed">"{aiExplanation}"</p>
+                  <p className="text-violet-900 dark:text-violet-200 text-sm italic leading-relaxed">"{aiExplanation}"</p>
                 ) : (
-                  <p className="text-violet-400 text-sm">Need a deeper explanation? Ask our AI tutor.</p>
+                  <p className="text-violet-400 dark:text-violet-500 text-sm">Need a deeper explanation? Ask our AI tutor.</p>
                 )}
               </div>
             </div>
           </div>
-          <div className="p-6 bg-gray-50 border-t border-gray-100 flex justify-between">
+          <div className="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex justify-between transition-colors">
             <button
               disabled={reviewIndex === 0}
               onClick={() => { setReviewIndex(prev => prev - 1); setAiExplanation(null); }}
-              className="px-6 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30"
+              className="px-6 py-2 font-semibold text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-30 transition-colors"
             >
               <i className="fa-solid fa-arrow-left mr-2"></i> Previous
             </button>
@@ -238,7 +238,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
                   setAiExplanation(null);
                 }
               }}
-              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200"
+              className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-all active:scale-95"
             >
               {reviewIndex === incorrectQuestions.length - 1 ? 'Done Reviewing' : 'Next Mistake'}
             </button>
@@ -258,24 +258,24 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
           <div className="text-6xl mb-4">
             {score / assessment.questions.length >= 0.7 ? '🎉' : '📚'}
           </div>
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">Well Done!</h2>
-          <p className="text-gray-600 mb-6">You've completed the {assessment.title}</p>
-          <div className="bg-indigo-50 rounded-lg p-6 mb-8 inline-block">
-            <span className="block text-sm text-indigo-600 font-semibold uppercase tracking-wider">Your Score</span>
-            <span className="text-5xl font-black text-indigo-800">{score} / {assessment.questions.length}</span>
+          <h2 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Well Done!</h2>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">You've completed the {assessment.title}</p>
+          <div className="bg-indigo-50 dark:bg-indigo-900/30 rounded-lg p-6 mb-8 inline-block transition-colors">
+            <span className="block text-sm text-indigo-600 dark:text-indigo-400 font-semibold uppercase tracking-wider">Your Score</span>
+            <span className="text-5xl font-black text-indigo-800 dark:text-indigo-200">{score} / {assessment.questions.length}</span>
           </div>
           <div className="flex flex-col gap-3 max-w-xs mx-auto">
             {hasMistakes && (
               <button 
                 onClick={() => setIsReviewing(true)}
-                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2"
+                className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-orange-200 dark:shadow-none"
               >
                 <i className="fa-solid fa-magnifying-glass"></i> Review Mistakes
               </button>
             )}
             <button 
               onClick={onCancel}
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
+              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg transition-colors shadow-lg shadow-indigo-200 dark:shadow-none"
             >
               Return to Dashboard
             </button>
@@ -290,16 +290,16 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
     <div className="max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">{assessment.title}</h2>
-          <p className="text-gray-500">Question {currentQuestionIndex + 1} of {assessment.questions.length}</p>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{assessment.title}</h2>
+          <p className="text-gray-500 dark:text-gray-400">Question {currentQuestionIndex + 1} of {assessment.questions.length}</p>
         </div>
         <button onClick={onCancel} className="text-gray-400 hover:text-red-500 transition-colors">
           <i className="fa-solid fa-xmark text-2xl"></i>
         </button>
       </div>
 
-      <div className="bg-white rounded-xl shadow-md border border-gray-100 overflow-hidden">
-        <div className="w-full h-2 bg-gray-100">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-md border border-gray-100 dark:border-gray-700 overflow-hidden transition-colors">
+        <div className="w-full h-2 bg-gray-100 dark:bg-gray-700">
           <div 
             className="h-full bg-indigo-600 transition-all duration-300"
             style={{ width: `${((currentQuestionIndex + 1) / assessment.questions.length) * 100}%` }}
@@ -307,12 +307,12 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
         </div>
 
         <div className="p-8">
-          <p className="text-xl text-gray-800 font-medium mb-6">
+          <p className="text-xl text-gray-800 dark:text-white font-medium mb-6">
             <FormattedText text={currentQuestion.text} />
           </p>
           
           {currentQuestion.imageUrl && (
-            <div className="mb-8 p-4 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-center">
+            <div className="mb-8 p-4 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-xl shadow-sm flex justify-center">
               <img 
                 src={currentQuestion.imageUrl} 
                 alt="Question Diagram" 
@@ -325,12 +325,12 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
           )}
 
           {currentQuestion.smilesStrings && currentQuestion.smilesStrings.length > 0 && (
-            <div className="mb-8 p-6 bg-white border border-gray-100 rounded-2xl shadow-sm">
+            <div className="mb-8 p-6 bg-white dark:bg-gray-700 border border-gray-100 dark:border-gray-600 rounded-2xl shadow-sm">
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {currentQuestion.smilesStrings.map((smiles, idx) => (
-                  <div key={idx} className="flex flex-col items-center p-2 border border-gray-50 rounded-xl hover:bg-gray-50 transition-colors">
+                  <div key={idx} className="flex flex-col items-center p-2 border border-gray-50 dark:border-gray-600 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors">
                     <MoleculeRenderer smiles={smiles} width={150} height={150} />
-                    <span className="mt-2 text-xs font-black text-gray-400 uppercase tracking-widest">
+                    <span className="mt-2 text-xs font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
                       ({String.fromCharCode(65 + idx)})
                     </span>
                   </div>
@@ -341,10 +341,10 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
 
           <div className="space-y-4">
             {isSubjective ? (
-              <div className="p-8 bg-indigo-50/50 rounded-2xl border-2 border-dashed border-indigo-200 text-center">
-                <i className="fa-solid fa-lightbulb text-indigo-400 text-4xl mb-4"></i>
-                <p className="text-indigo-800 font-bold text-lg mb-2">Subjective Question</p>
-                <p className="text-indigo-600 text-sm">
+              <div className="p-8 bg-indigo-50/50 dark:bg-indigo-900/20 rounded-2xl border-2 border-dashed border-indigo-200 dark:border-indigo-800 text-center">
+                <i className="fa-solid fa-lightbulb text-indigo-400 dark:text-indigo-500 text-4xl mb-4"></i>
+                <p className="text-indigo-800 dark:text-indigo-200 font-bold text-lg mb-2">Subjective Question</p>
+                <p className="text-indigo-600 dark:text-indigo-400 text-sm">
                   Think of your answer carefully, then click <strong>"Show Answer"</strong> to compare it with the model answer.
                 </p>
               </div>
@@ -358,7 +358,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
                 >
                   <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
                     responses[currentQuestion.id] === option.id ? (isRevealed && currentQuestion.correctOptionId !== option.id ? 'border-red-500 bg-red-500' : 'border-indigo-600 bg-indigo-600') : 
-                    (isRevealed && currentQuestion.correctOptionId === option.id ? 'border-green-500 bg-green-500' : 'border-gray-300')
+                    (isRevealed && currentQuestion.correctOptionId === option.id ? 'border-green-500 bg-green-500' : 'border-gray-300 dark:border-gray-600')
                   }`}>
                     {(responses[currentQuestion.id] === option.id || (isRevealed && currentQuestion.correctOptionId === option.id)) && <div className="w-2 h-2 bg-white rounded-full" />}
                   </div>
@@ -369,24 +369,24 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
           </div>
 
           {isRevealed && currentQuestion.explanation && (
-            <div className="mt-8 p-6 bg-green-50 border-l-4 border-green-500 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
-              <p className="text-sm font-black text-green-700 uppercase mb-2 tracking-widest">
+            <div className="mt-8 p-6 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+              <p className="text-sm font-black text-green-700 dark:text-green-400 uppercase mb-2 tracking-widest">
                 {isSubjective ? 'Model Answer' : 'Explanation'}
               </p>
-              <div className="text-green-900 leading-relaxed">
+              <div className="text-green-900 dark:text-green-200 leading-relaxed">
                 <FormattedText text={currentQuestion.explanation} />
               </div>
             </div>
           )}
         </div>
 
-        <div className="p-6 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+        <div className="p-6 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between transition-colors">
           <button
             disabled={currentQuestionIndex === 0}
             onClick={() => {
               setCurrentQuestionIndex(prev => prev - 1);
             }}
-            className="px-4 py-2 font-semibold text-gray-600 hover:text-indigo-600 disabled:opacity-30 transition-colors"
+            className="px-4 py-2 font-semibold text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 disabled:opacity-30 transition-colors"
           >
             <i className="fa-solid fa-arrow-left mr-2"></i> Previous
           </button>
@@ -396,7 +396,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
               <button
                 disabled={!isSubjective && !hasSelected}
                 onClick={handleShowAnswer}
-                className="px-4 py-2 text-indigo-600 font-bold hover:bg-indigo-100 rounded-lg disabled:opacity-30 transition-colors flex items-center gap-2"
+                className="px-4 py-2 text-indigo-600 dark:text-indigo-400 font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 rounded-lg disabled:opacity-30 transition-colors flex items-center gap-2"
               >
                 <i className="fa-solid fa-eye"></i> Show Answer
               </button>
@@ -406,7 +406,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
               <button
                 disabled={!canProceed}
                 onClick={handleSubmit}
-                className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-lg shadow-green-200 transition-transform active:scale-95 disabled:opacity-50"
+                className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold shadow-lg shadow-green-200 dark:shadow-none transition-transform active:scale-95 disabled:opacity-50"
               >
                 Finish & Submit
               </button>
@@ -416,7 +416,7 @@ export const MCQSession: React.FC<MCQSessionProps> = ({ assessment, studentId, o
                 onClick={() => {
                   setCurrentQuestionIndex(prev => prev + 1);
                 }}
-                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 transition-transform active:scale-95 disabled:opacity-50"
+                className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-bold shadow-lg shadow-indigo-200 dark:shadow-none transition-transform active:scale-95 disabled:opacity-50"
               >
                 Next <i className="fa-solid fa-arrow-right ml-2"></i>
               </button>

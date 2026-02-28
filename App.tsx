@@ -11,6 +11,20 @@ const App: React.FC = () => {
   const [assessments, setAssessments] = useState<Assessment[]>([]);
   const [loading, setLoading] = useState(true);
   const [initError, setInitError] = useState<string | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     const initApp = async () => {
@@ -75,18 +89,18 @@ const App: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col transition-colors duration-300">
       {/* Navigation Bar */}
-      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50">
+      <nav className="bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 sticky top-0 z-50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="bg-indigo-600 w-8 h-8 rounded-lg flex items-center justify-center">
               <i className="fa-solid fa-book-open text-white text-sm"></i>
             </div>
             <div className="flex flex-col leading-none">
-              <span className="font-black text-indigo-900 tracking-tight uppercase">PrepHive 🐝</span>
+              <span className="font-black text-indigo-900 dark:text-indigo-400 tracking-tight uppercase">PrepHive 🐝</span>
               <span 
-                className="text-[10px] italic text-indigo-600" 
+                className="text-[10px] italic text-indigo-600 dark:text-indigo-300" 
                 style={{ fontFamily: "'Dancing Script', cursive" }}
               >
                 By Raunak Pandey
@@ -94,10 +108,23 @@ const App: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
+            {/* Theme Toggle Button */}
+            <button 
+              onClick={() => setIsDarkMode(!isDarkMode)}
+              className="p-2 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all"
+              title={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            >
+              {isDarkMode ? (
+                <i className="fa-solid fa-sun text-lg"></i>
+              ) : (
+                <i className="fa-solid fa-moon text-lg"></i>
+              )}
+            </button>
+
             <div className="hidden md:flex flex-col items-end">
-              <span className="text-sm font-bold text-gray-800">{currentUser.name}</span>
-              <span className="text-[10px] font-black uppercase text-indigo-600 bg-indigo-50 px-2 rounded-full">
+              <span className="text-sm font-bold text-gray-800 dark:text-gray-200">{currentUser.name}</span>
+              <span className="text-[10px] font-black uppercase text-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 dark:text-indigo-400 px-2 rounded-full">
                 {currentUser.role}
               </span>
             </div>
@@ -122,8 +149,8 @@ const App: React.FC = () => {
       </main>
 
       {/* Simple Footer */}
-      <footer className="bg-white border-t border-gray-100 py-6">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-400 font-medium">
+      <footer className="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 py-6 transition-colors duration-300">
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm text-gray-400 dark:text-gray-500 font-medium">
           © {new Date().getFullYear()} PrepHive 🐝 by Raunak Pandey. All rights reserved.
         </div>
       </footer>

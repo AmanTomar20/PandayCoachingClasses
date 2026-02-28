@@ -112,10 +112,10 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
           <i className="fa-solid fa-arrow-left"></i> Back to Dashboard
         </button>
         <div className="mb-8">
-          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border mb-2 inline-block ${sessionMode === 'TEST' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-emerald-50 text-emerald-600 border-emerald-100'}`}>
+          <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border mb-2 inline-block ${sessionMode === 'TEST' ? 'bg-indigo-50 text-indigo-600 border-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800' : 'bg-emerald-50 text-emerald-600 border-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800'}`}>
             {sessionMode === 'TEST' ? 'Exam Center' : 'Practice Zone'}
           </span>
-          <h2 className="text-3xl font-black text-gray-900">Choose a Subject</h2>
+          <h2 className="text-3xl font-black text-gray-900 dark:text-white">Choose a Subject</h2>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {subjects.map(subject => (
@@ -159,22 +159,22 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
             <i className="fa-solid fa-arrow-left"></i> Back to Subjects
           </button>
           <div className="flex items-center gap-3">
-             <span className={`px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest border ${sessionMode === 'TEST' ? 'bg-indigo-50 text-indigo-700 border-indigo-100' : 'bg-emerald-50 text-emerald-700 border-emerald-100'}`}>
+             <span className={`px-4 py-1.5 rounded-full font-black text-xs uppercase tracking-widest border ${sessionMode === 'TEST' ? 'bg-indigo-50 text-indigo-700 border-indigo-100 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800' : 'bg-emerald-50 text-emerald-700 border-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400 dark:border-emerald-800'}`}>
               {sessionMode} MODE
             </span>
-            <span className="px-4 py-1.5 bg-gray-100 text-gray-700 rounded-full font-black text-xs uppercase tracking-widest border border-gray-200">
+            <span className="px-4 py-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-full font-black text-xs uppercase tracking-widest border border-gray-200 dark:border-gray-600">
               {selectedSubject}
             </span>
           </div>
         </div>
 
-        <h2 className="text-3xl font-black text-gray-900 mb-6">Available {sessionMode === 'TEST' ? 'Exam' : 'Practice'} Sets</h2>
+        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-6">Available {sessionMode === 'TEST' ? 'Exam' : 'Practice'} Sets</h2>
         
         {sets.length === 0 ? (
-          <div className="bg-white p-12 rounded-3xl border-2 border-dashed border-gray-200 text-center">
-            <i className={`fa-solid ${sessionMode === 'TEST' ? 'fa-calendar-check' : 'fa-hourglass-start'} text-gray-300 text-5xl mb-4`}></i>
-            <p className="text-gray-400 font-bold text-xl">No {sessionMode.toLowerCase()} sets currently available for {selectedSubject}.</p>
-            <p className="text-gray-400 text-sm mt-2">Check back later or try another subject!</p>
+          <div className="bg-white dark:bg-gray-800 p-12 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-700 text-center">
+            <i className={`fa-solid ${sessionMode === 'TEST' ? 'fa-calendar-check' : 'fa-hourglass-start'} text-gray-300 dark:text-gray-600 text-5xl mb-4`}></i>
+            <p className="text-gray-400 dark:text-gray-500 font-bold text-xl">No {sessionMode.toLowerCase()} sets currently available for {selectedSubject}.</p>
+            <p className="text-gray-400 dark:text-gray-500 text-sm mt-2">Check back later or try another subject!</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -182,18 +182,18 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
               <button
                 key={set.id}
                 onClick={() => setActiveAssessment(set)}
-                className={`w-full bg-white p-6 rounded-2xl border-2 border-gray-100 flex items-center justify-between group transition-all shadow-sm hover:shadow-md ${sessionMode === 'TEST' ? 'hover:border-indigo-600' : 'hover:border-emerald-600'}`}
+                className={`w-full bg-white dark:bg-gray-800 p-6 rounded-2xl border-2 border-gray-100 dark:border-gray-700 flex items-center justify-between group transition-all shadow-sm hover:shadow-md ${sessionMode === 'TEST' ? 'hover:border-indigo-600 dark:hover:border-indigo-500' : 'hover:border-emerald-600 dark:hover:border-emerald-500'}`}
               >
                 <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg ${sessionMode === 'TEST' ? 'bg-indigo-50 text-indigo-600' : 'bg-emerald-50 text-emerald-600'}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-lg ${sessionMode === 'TEST' ? 'bg-indigo-50 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400' : 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400'}`}>
                     {idx + 1}
                   </div>
                   <div className="text-left">
-                    <h4 className={`font-bold text-gray-800 text-lg transition-colors ${sessionMode === 'TEST' ? 'group-hover:text-indigo-600' : 'group-hover:text-emerald-600'}`}>{set.title}</h4>
+                    <h4 className={`font-bold text-gray-800 dark:text-gray-200 text-lg transition-colors ${sessionMode === 'TEST' ? 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400' : 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400'}`}>{set.title}</h4>
                     <div className="flex items-center gap-3 mt-1">
-                      <span className="text-xs text-gray-400 font-medium"><i className="fa-solid fa-list-check mr-1"></i> {set.questions.length} Questions</span>
+                      <span className="text-xs text-gray-400 dark:text-gray-500 font-medium"><i className="fa-solid fa-list-check mr-1"></i> {set.questions.length} Questions</span>
                       {set.durationMinutes && (
-                        <span className="text-xs text-gray-400 font-medium"><i className="fa-solid fa-clock mr-1"></i> {set.durationMinutes} Mins</span>
+                        <span className="text-xs text-gray-400 dark:text-gray-500 font-medium"><i className="fa-solid fa-clock mr-1"></i> {set.durationMinutes} Mins</span>
                       )}
                     </div>
                   </div>
@@ -214,8 +214,8 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
     <div className="max-w-6xl mx-auto py-10 px-4">
       <header className="mb-10 flex justify-between items-end">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 mb-2">Hello, {user.name}! 👋</h1>
-          <p className="text-lg text-gray-600">Your roadmap to academic excellence starts here.</p>
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white mb-2">Hello, {user.name}! 👋</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-400">Your roadmap to academic excellence starts here.</p>
         </div>
       </header>
 
@@ -224,25 +224,25 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
         <Card className="!p-0 overflow-hidden group shadow-xl hover:shadow-2xl transition-all duration-300">
           <div className="p-8">
             <div className="flex items-center gap-4 mb-6">
-              <div className="bg-emerald-100 p-4 rounded-2xl group-hover:bg-emerald-500 group-hover:text-white transition-all">
+              <div className="bg-emerald-100 dark:bg-emerald-900/30 p-4 rounded-2xl group-hover:bg-emerald-500 group-hover:text-white transition-all text-emerald-600 dark:text-emerald-400">
                 <i className="fa-solid fa-graduation-cap text-3xl"></i>
               </div>
               <div>
-                <h2 className="text-2xl font-black text-gray-800">Practice Zone</h2>
-                <p className="text-gray-500">Adaptive learning for core subjects.</p>
+                <h2 className="text-2xl font-black text-gray-800 dark:text-white">Practice Zone</h2>
+                <p className="text-gray-500 dark:text-gray-400">Adaptive learning for core subjects.</p>
               </div>
             </div>
-            <p className="text-gray-600 mb-8 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
               Master complex concepts through categorized practice sets in Mathematics, Physics, and Chemistry. Immediate feedback included.
             </p>
             <button 
               onClick={() => startSession('PRACTICE')}
-              className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-lg shadow-emerald-100 flex items-center justify-center gap-3 transition-all"
+              className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl shadow-lg shadow-emerald-100 dark:shadow-none flex items-center justify-center gap-3 transition-all"
             >
               Start Practice Session <i className="fa-solid fa-arrow-right"></i>
             </button>
           </div>
-          <div className="bg-emerald-50 py-3 px-8 border-t border-emerald-100 flex justify-between text-xs font-bold text-emerald-700">
+          <div className="bg-emerald-50 dark:bg-emerald-900/20 py-3 px-8 border-t border-emerald-100 dark:border-emerald-800 flex justify-between text-xs font-bold text-emerald-700 dark:text-emerald-400">
             <span>3 SUBJECTS AVAILABLE</span>
             <span>UNLIMITED ATTEMPTS</span>
           </div>
@@ -252,25 +252,25 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
         <Card className="!p-0 overflow-hidden group shadow-xl hover:shadow-2xl transition-all duration-300">
           <div className="p-8">
             <div className="flex items-center gap-4 mb-6">
-              <div className="bg-indigo-100 p-4 rounded-2xl group-hover:bg-indigo-500 group-hover:text-white transition-all">
+              <div className="bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-2xl group-hover:bg-indigo-500 group-hover:text-white transition-all text-indigo-600 dark:text-indigo-400">
                 <i className="fa-solid fa-stopwatch text-3xl"></i>
               </div>
               <div>
-                <h2 className="text-2xl font-black text-gray-800">Test Center</h2>
-                <p className="text-gray-500">Simulate real exam conditions.</p>
+                <h2 className="text-2xl font-black text-gray-800 dark:text-white">Test Center</h2>
+                <p className="text-gray-500 dark:text-gray-400">Simulate real exam conditions.</p>
               </div>
             </div>
-            <p className="text-gray-600 mb-8 leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
               Assess your preparation with timed unit tests and full-length mock exams. Get detailed proctored results and performance metrics.
             </p>
             <button 
               onClick={() => startSession('TEST')}
-              className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-lg shadow-indigo-100 flex items-center justify-center gap-3 transition-all"
+              className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl shadow-lg shadow-indigo-100 dark:shadow-none flex items-center justify-center gap-3 transition-all"
             >
               Start Exam Session <i className="fa-solid fa-arrow-right"></i>
             </button>
           </div>
-          <div className="bg-indigo-50 py-3 px-8 border-t border-indigo-100 flex justify-between text-xs font-bold text-indigo-700">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 py-3 px-8 border-t border-indigo-100 dark:border-indigo-800 flex justify-between text-xs font-bold text-indigo-700 dark:text-indigo-400">
             <span>TIMED ASSESSMENT</span>
             <span>PROCTORED RESULTS</span>
           </div>
@@ -285,55 +285,55 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
            </div>
         ) : submissions.length === 0 ? (
           <div className="py-12 text-center">
-            <i className="fa-solid fa-file-circle-question text-gray-200 text-6xl mb-4"></i>
-            <p className="text-gray-400 font-bold">No activity history yet. Start a session to see analytics.</p>
+            <i className="fa-solid fa-file-circle-question text-gray-200 dark:text-gray-700 text-6xl mb-4"></i>
+            <p className="text-gray-400 dark:text-gray-500 font-bold">No activity history yet. Start a session to see analytics.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="py-4 font-black text-gray-400 uppercase text-[10px] tracking-widest">Assessment Details</th>
-                  <th className="py-4 font-black text-gray-400 uppercase text-[10px] tracking-widest text-center">Date</th>
-                  <th className="py-4 font-black text-gray-400 uppercase text-[10px] tracking-widest text-center">Score</th>
-                  <th className="py-4 font-black text-gray-400 uppercase text-[10px] tracking-widest text-center">Progress</th>
-                  <th className="py-4 font-black text-gray-400 uppercase text-[10px] tracking-widest text-right">Action</th>
+                <tr className="border-b border-gray-100 dark:border-gray-700">
+                  <th className="py-4 font-black text-gray-400 dark:text-gray-500 uppercase text-[10px] tracking-widest">Assessment Details</th>
+                  <th className="py-4 font-black text-gray-400 dark:text-gray-500 uppercase text-[10px] tracking-widest text-center">Date</th>
+                  <th className="py-4 font-black text-gray-400 dark:text-gray-500 uppercase text-[10px] tracking-widest text-center">Score</th>
+                  <th className="py-4 font-black text-gray-400 dark:text-gray-500 uppercase text-[10px] tracking-widest text-center">Progress</th>
+                  <th className="py-4 font-black text-gray-400 dark:text-gray-500 uppercase text-[10px] tracking-widest text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-50">
+              <tbody className="divide-y divide-gray-50 dark:divide-gray-700">
                 {submissions.slice().reverse().map((sub, idx) => {
                   const assessment = assessments.find(a => a.id === sub.assessmentId);
                   const percentage = (sub.score / sub.totalQuestions) * 100;
                   return (
-                    <tr key={idx} className="group hover:bg-gray-50/50 transition-colors">
+                    <tr key={idx} className="group hover:bg-gray-50/50 dark:hover:bg-gray-700/30 transition-colors">
                       <td className="py-5">
                         <div className="flex flex-col">
-                          <span className="font-bold text-gray-800">{assessment?.title || 'Archive Set'}</span>
-                          <span className={`w-fit mt-1 px-2 py-0.5 rounded text-[8px] font-black uppercase ${assessment?.type === 'TEST' ? 'bg-indigo-100 text-indigo-700' : 'bg-emerald-100 text-emerald-700'}`}>
+                          <span className="font-bold text-gray-800 dark:text-gray-200">{assessment?.title || 'Archive Set'}</span>
+                          <span className={`w-fit mt-1 px-2 py-0.5 rounded text-[8px] font-black uppercase ${assessment?.type === 'TEST' ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:text-indigo-400' : 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400'}`}>
                             {assessment?.subject || 'General'} • {assessment?.type}
                           </span>
                         </div>
                       </td>
-                      <td className="py-5 text-center text-sm font-medium text-gray-500">
+                      <td className="py-5 text-center text-sm font-medium text-gray-500 dark:text-gray-400">
                         {new Date(sub.completedAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                       </td>
                       <td className="py-5 text-center">
-                        <span className={`px-3 py-1 rounded-full font-black text-sm ${percentage >= 70 ? 'bg-emerald-50 text-emerald-600' : 'bg-orange-50 text-orange-600'}`}>
+                        <span className={`px-3 py-1 rounded-full font-black text-sm ${percentage >= 70 ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400' : 'bg-orange-50 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400'}`}>
                           {sub.score} / {sub.totalQuestions}
                         </span>
                       </td>
                       <td className="py-5 text-center">
                          <div className="inline-flex items-center gap-3 justify-center">
-                            <div className="w-24 h-1.5 bg-gray-100 rounded-full overflow-hidden hidden sm:block">
+                            <div className="w-24 h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden hidden sm:block">
                                <div className={`h-full transition-all duration-1000 ${percentage >= 70 ? 'bg-emerald-500' : 'bg-orange-400'}`} style={{ width: `${percentage}%` }}></div>
                             </div>
-                            <span className="font-black text-gray-900 text-xs w-8">{Math.round(percentage)}%</span>
+                            <span className="font-black text-gray-900 dark:text-gray-200 text-xs w-8">{Math.round(percentage)}%</span>
                          </div>
                       </td>
                       <td className="py-5 text-right">
                         <button 
                           onClick={() => startReview(sub)}
-                          className="px-4 py-2 bg-white border-2 border-indigo-100 text-indigo-600 rounded-xl font-bold text-xs uppercase hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all shadow-sm"
+                          className="px-4 py-2 bg-white dark:bg-gray-800 border-2 border-indigo-100 dark:border-indigo-900/50 text-indigo-600 dark:text-indigo-400 rounded-xl font-bold text-xs uppercase hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-500 dark:hover:text-white hover:border-indigo-600 dark:hover:border-indigo-500 transition-all shadow-sm"
                         >
                           <i className="fa-solid fa-eye mr-2"></i> Review
                         </button>
