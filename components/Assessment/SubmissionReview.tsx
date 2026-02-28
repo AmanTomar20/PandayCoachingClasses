@@ -21,13 +21,21 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
     try {
       // Create fresh instance to ensure the API key from process.env is used
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-      const userSelected = question.options.find(o => o.id === submission.responses[question.id])?.text || "None";
-      const correctText = question.options.find(o => o.id === question.correctOptionId)?.text;
+      const isSubj = !question.options || question.options.length === 0;
+      
+      let prompt = '';
+      if (isSubj) {
+        prompt = `Reviewing student attempt for subjective question: "${question.text}"
+        Provide a concise, encouraging, and conceptually deep model answer or explanation (max 150 words).`;
+      } else {
+        const userSelected = question.options.find(o => o.id === submission.responses[question.id])?.text || "None";
+        const correctText = question.options.find(o => o.id === question.correctOptionId)?.text;
 
-      const prompt = `Reviewing student attempt for: "${question.text}"
-      The correct answer is: "${correctText}".
-      The student chose: "${userSelected}".
-      Provide a concise, encouraging, and conceptually deep explanation (max 100 words) of why "${correctText}" is the correct answer.`;
+        prompt = `Reviewing student attempt for: "${question.text}"
+        The correct answer is: "${correctText}".
+        The student chose: "${userSelected}".
+        Provide a concise, encouraging, and conceptually deep explanation (max 100 words) of why "${correctText}" is the correct answer.`;
+      }
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
@@ -78,24 +86,25 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
 
       <div className="space-y-6 px-4">
         {assessment.questions.map((q, idx) => {
+          const isSubj = !q.options || q.options.length === 0;
           const userSelectedId = submission.responses[q.id];
-          const isCorrect = userSelectedId === q.correctOptionId;
+          const isCorrect = isSubj ? true : userSelectedId === q.correctOptionId;
           const aiExplanation = aiExplanations[q.id];
           const isAiLoading = aiLoadingIds[q.id];
 
           return (
-            <div key={q.id} className={`bg-white rounded-3xl shadow-sm border ${isCorrect ? 'border-indigo-100' : 'border-red-100'} p-8 relative transition-all hover:shadow-md`}>
+            <div key={q.id} className={`bg-white rounded-3xl shadow-sm border ${isSubj ? 'border-indigo-100' : (isCorrect ? 'border-indigo-100' : 'border-red-100')} p-8 relative transition-all hover:shadow-md`}>
               {/* Question Header */}
               <div className="flex items-start gap-4 mb-6">
-                <div className={`w-8 h-8 min-w-[32px] rounded-lg flex items-center justify-center font-black text-sm ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
+                <div className={`w-8 h-8 min-w-[32px] rounded-lg flex items-center justify-center font-black text-sm ${isSubj ? 'bg-indigo-100 text-indigo-600' : (isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600')}`}>
                   {idx + 1}
                 </div>
                 <div className="flex-grow pr-32">
                   <h4 className="text-xl font-bold text-gray-800 leading-tight mb-3">
                     <FormattedText text={q.text} />
                   </h4>
-                  <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
-                    {isCorrect ? 'CORRECT' : 'INCORRECT'}
+                  <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${isSubj ? 'bg-indigo-100 text-indigo-600' : (isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600')}`}>
+                    {isSubj ? 'SUBJECTIVE' : (isCorrect ? 'CORRECT' : 'INCORRECT')}
                   </span>
                 </div>
                 
@@ -142,31 +151,40 @@ export const SubmissionReview: React.FC<SubmissionReviewProps> = ({ submission, 
                 </div>
               )}
 
-              {/* Options Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                {q.options.map((opt) => {
-                  const isOptSelected = userSelectedId === opt.id;
-                  const isOptCorrect = q.correctOptionId === opt.id;
-                  
-                  let containerStyle = "border-gray-100 bg-gray-50/50 text-gray-500";
-                  let icon = null;
+              {/* Options Grid or Model Answer */}
+              {isSubj ? (
+                <div className="mb-6 p-6 bg-green-50 border-l-4 border-green-500 rounded-2xl">
+                  <p className="text-[11px] font-black text-green-700 uppercase tracking-widest mb-2">Model Answer</p>
+                  <div className="text-green-900 leading-relaxed">
+                    <FormattedText text={q.explanation || "No model answer provided."} />
+                  </div>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                  {q.options.map((opt) => {
+                    const isOptSelected = userSelectedId === opt.id;
+                    const isOptCorrect = q.correctOptionId === opt.id;
+                    
+                    let containerStyle = "border-gray-100 bg-gray-50/50 text-gray-500";
+                    let icon = null;
 
-                  if (isOptCorrect) {
-                    containerStyle = "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-4 ring-emerald-50";
-                    icon = <i className="fa-solid fa-circle-check text-emerald-500 ml-auto"></i>;
-                  } else if (isOptSelected && !isOptCorrect) {
-                    containerStyle = "border-red-500 bg-red-50 text-red-800 font-bold ring-4 ring-red-50";
-                    icon = <i className="fa-solid fa-circle-xmark text-red-500 ml-auto"></i>;
-                  }
+                    if (isOptCorrect) {
+                      containerStyle = "border-emerald-500 bg-emerald-50 text-emerald-800 font-bold ring-4 ring-emerald-50";
+                      icon = <i className="fa-solid fa-circle-check text-emerald-500 ml-auto"></i>;
+                    } else if (isOptSelected && !isOptCorrect) {
+                      containerStyle = "border-red-500 bg-red-50 text-red-800 font-bold ring-4 ring-red-50";
+                      icon = <i className="fa-solid fa-circle-xmark text-red-500 ml-auto"></i>;
+                    }
 
-                  return (
-                    <div key={opt.id} className={`p-5 rounded-2xl border-2 flex items-center gap-4 transition-all ${containerStyle}`}>
-                      <span><FormattedText text={opt.text} /></span>
-                      {icon}
-                    </div>
-                  );
-                })}
-              </div>
+                    return (
+                      <div key={opt.id} className={`p-5 rounded-2xl border-2 flex items-center gap-4 transition-all ${containerStyle}`}>
+                        <span><FormattedText text={opt.text} /></span>
+                        {icon}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
 
               {/* AI Tutor Insights Section */}
               {(aiExplanation || isAiLoading) && (

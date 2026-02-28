@@ -38,6 +38,7 @@ export interface Assessment {
   subject?: Subject;
   questions: Question[];
   durationMinutes?: number;
+  isAvailable?: boolean;
 }
 
 export interface Submission {

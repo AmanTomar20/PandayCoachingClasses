@@ -143,7 +143,11 @@ export const StudentDashboard: React.FC<StudentDashboardProps> = ({ user, assess
 
   // --- Set Selection View (Shared for Practice & Test) ---
   if (currentView === 'SET_PICKER' && selectedSubject) {
-    const sets = assessments.filter(a => a.type === sessionMode && a.subject === selectedSubject);
+    const sets = assessments.filter(a => 
+      a.type === sessionMode && 
+      a.subject === selectedSubject && 
+      a.isAvailable !== false
+    );
 
     return (
       <div className="max-w-4xl mx-auto py-10 px-4 animate-in fade-in slide-in-from-right-4 duration-500">

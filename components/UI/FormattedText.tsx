@@ -33,7 +33,7 @@ export const FormattedText: React.FC<FormattedTextProps> = ({ text, className })
   }, [text]);
 
   return (
-    <span ref={containerRef} className={className} style={{ display: 'inline-block', width: '100%' }}>
+    <span ref={containerRef} className={className} style={{ display: 'inline-block', width: '100%', whiteSpace: 'pre-wrap' }}>
       {text}
     </span>
   );

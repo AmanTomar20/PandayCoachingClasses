@@ -209,9 +209,20 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
     }
   };
 
+  const handleToggleAvailability = async (assessment: Assessment) => {
+    try {
+      const updatedAssessment = { ...assessment, isAvailable: !assessment.isAvailable };
+      await storageService.saveAssessment(updatedAssessment);
+      await loadData();
+    } catch (err) {
+      console.error("Error toggling availability:", err);
+    }
+  };
+
   const pushToCloud = async (data: any) => {
     try {
-      await storageService.saveAssessment(data as Assessment);
+      const assessmentWithAvailability = { ...data, isAvailable: true };
+      await storageService.saveAssessment(assessmentWithAvailability as Assessment);
       alert("Assessment successfully pushed to student cloud!");
       await loadData();
       setGeneratedPreview(null);
@@ -687,6 +698,13 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                   </span>
                   <div className="flex gap-2">
                     <button 
+                      onClick={() => handleToggleAvailability(assessment)}
+                      title={assessment.isAvailable === false ? "Make Available" : "Hide from Students"}
+                      className={`w-8 h-8 rounded-lg transition-all flex items-center justify-center shadow-sm ${assessment.isAvailable === false ? 'bg-red-50 text-red-400 hover:bg-red-100' : 'bg-emerald-50 text-emerald-500 hover:bg-emerald-100'}`}
+                    >
+                      <i className={`fa-solid ${assessment.isAvailable === false ? 'fa-eye-slash' : 'fa-eye'} text-sm`}></i>
+                    </button>
+                    <button 
                       onClick={() => setEditingAssessment(assessment)}
                       className="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:bg-indigo-50 hover:text-indigo-600 transition-all flex items-center justify-center shadow-sm"
                     >
@@ -717,7 +735,8 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
               title: 'New Question Set',
               type: 'PRACTICE',
               subject: 'Mathematics',
-              questions: []
+              questions: [],
+              isAvailable: true
             })}
             className="border-4 border-dashed border-gray-100 rounded-3xl p-10 flex flex-col items-center justify-center gap-3 text-gray-300 hover:border-indigo-100 hover:text-indigo-400 hover:bg-indigo-50/20 transition-all group"
           >

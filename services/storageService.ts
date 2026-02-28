@@ -135,10 +135,14 @@ export const storageService = {
 
   getAssessments: async (): Promise<Assessment[]> => {
     try {
-      // Force Sync: Always update initial assessments from constants.tsx to ensure 
-      // code changes are reflected in the database.
+      // Smart Seed: Only add initial assessments if they don't exist in the database.
+      // This prevents overwriting user-managed fields like 'isAvailable'.
       for (const assessment of INITIAL_ASSESSMENTS) {
-        await setDoc(doc(db, COLLECTIONS.ASSESSMENTS, assessment.id), assessment);
+        const docRef = doc(db, COLLECTIONS.ASSESSMENTS, assessment.id);
+        const docSnap = await getDoc(docRef);
+        if (!docSnap.exists()) {
+          await setDoc(docRef, assessment);
+        }
       }
 
       const querySnapshot = await getDocs(collection(db, COLLECTIONS.ASSESSMENTS));
