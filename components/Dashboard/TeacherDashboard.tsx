@@ -29,6 +29,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
   const [generatedPreview, setGeneratedPreview] = useState<Partial<Assessment> | null>(null);
   const [targetType, setTargetType] = useState<AssessmentType>('PRACTICE');
   const [selectedSubject, setSelectedSubject] = useState<Subject>('Mathematics');
+  const [questionCount, setQuestionCount] = useState<number>(5);
   const [customInstructions, setCustomInstructions] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -94,7 +95,7 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
       "${customInstructions || 'Extract balanced, high-quality questions representing the core concepts of the document.'}"
 
       Requirements:
-      1. Extract exactly 5 multiple-choice questions.
+      1. Extract exactly ${questionCount} multiple-choice questions.
       2. Each question must have 4 options with IDs 'a', 'b', 'c', and 'd'.
       3. Focus on conceptual understanding as requested by the teacher's instructions.
       4. Explanations must be concise (max 2 sentences).
@@ -114,8 +115,8 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
         ],
         config: {
           responseMimeType: "application/json",
-          maxOutputTokens: 8192,
-          thinkingConfig: { thinkingBudget: 4000 },
+          maxOutputTokens: 65536,
+          thinkingConfig: { thinkingBudget: 2000 },
           responseSchema: {
             type: Type.OBJECT,
             properties: {
@@ -155,21 +156,27 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
       rawText = rawText.replace(/^```json\n?/, "").replace(/\n?```$/, "").trim();
       if (!rawText) throw new Error("Empty response from AI");
 
-      const result = JSON.parse(rawText);
-      const assessmentData: Partial<Assessment> = {
-        ...result,
-        subject: selectedSubject,
-        type: targetType,
-        id: `ai_${Math.random().toString(36).substring(2, 11)}`,
-      };
+      try {
+        const result = JSON.parse(rawText);
+        const assessmentData: Partial<Assessment> = {
+          ...result,
+          subject: selectedSubject,
+          type: targetType,
+          id: `ai_${Math.random().toString(36).substring(2, 11)}`,
+        };
 
-      if (targetType === 'TEST') {
-        assessmentData.durationMinutes = 30;
+        if (targetType === 'TEST') {
+          assessmentData.durationMinutes = 30;
+        }
+        setGeneratedPreview(assessmentData);
+      } catch (parseErr) {
+        console.error("JSON Parse Error:", parseErr);
+        console.log("Raw Text was:", rawText);
+        throw new Error("The AI response was too large and got cut off. Please try generating fewer questions (e.g., 20-30 at a time).");
       }
-      setGeneratedPreview(assessmentData);
     } catch (err: any) {
       console.error("AI Generation Error:", err);
-      alert("Failed to generate questions. Ensure your PDF has clear text content.");
+      alert(err.message || "Failed to generate questions. Ensure your PDF has clear text content.");
     } finally {
       setIsGenerating(false);
     }
@@ -782,6 +789,31 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                           {sub.substring(0, 5)}
                         </button>
                       ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Question Count Selector */}
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Number of Questions (1-250)</label>
+                  <div className="relative">
+                    <input 
+                      type="number"
+                      min="1"
+                      max="250"
+                      value={questionCount}
+                      onChange={(e) => {
+                        const val = parseInt(e.target.value);
+                        if (!isNaN(val)) {
+                          setQuestionCount(Math.min(250, Math.max(1, val)));
+                        } else {
+                          setQuestionCount(1);
+                        }
+                      }}
+                      className="w-full p-4 bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-700 rounded-2xl outline-none focus:border-indigo-500 transition-all text-sm font-bold dark:text-white"
+                    />
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-black text-indigo-400 uppercase tracking-widest pointer-events-none">
+                      Questions
                     </div>
                   </div>
                 </div>
