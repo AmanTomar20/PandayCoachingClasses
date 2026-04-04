@@ -89,18 +89,15 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
       const base64Data = await fileToBase64(pdfFile);
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       
-      const prompt = `Task: Create an educational ${targetType.toLowerCase()} set for the subject "${selectedSubject}" from the provided PDF.
+      const prompt = `Task: Create an educational ${targetType.toLowerCase()} set for "${selectedSubject}" from the PDF.
       
-      TEACHER'S SPECIFIC INSTRUCTIONS: 
-      "${customInstructions || 'Extract balanced, high-quality questions representing the core concepts of the document.'}"
+      INSTRUCTIONS: "${customInstructions || 'Extract balanced, high-quality questions.'}"
 
       Requirements:
-      1. Extract exactly ${questionCount} multiple-choice questions.
-      2. Each question must have 4 options with IDs 'a', 'b', 'c', and 'd'.
-      3. Focus on conceptual understanding as requested by the teacher's instructions.
-      4. Explanations must be concise (max 2 sentences).
-      5. FORMATTING: Use LaTeX for all mathematical expressions (e.g., $x^2$, $\\frac{a}{b}$). For chemical formulas and equations, ALWAYS use the \\ce{} command within LaTeX delimiters (e.g., $\\ce{H2SO4}$, $\\ce{R-OH + HCl ->[ZnCl2] R-Cl + H2O}$).
-      6. Output ONLY raw JSON matching the schema.`;
+      1. Extract exactly ${questionCount} MCQs with 4 options ('a'-'d').
+      2. Use LaTeX for math ($x^2$) and \\ce{} for chemistry ($\\ce{H2SO4}$).
+      3. For chemical structures, provide SMILES strings in a "smilesStrings" array (e.g., ['Oc1ccccc1', 'OCc1ccccc1']). We use SmilesDrawer for rendering.
+      4. Output ONLY raw JSON matching the schema.`;
 
       const response = await ai.models.generateContent({
         model: 'gemini-3-pro-preview',
@@ -129,6 +126,11 @@ export const TeacherDashboard: React.FC<TeacherDashboardProps> = ({ assessments:
                   properties: {
                     text: { type: Type.STRING },
                     imageUrl: { type: Type.STRING, description: "Optional image URL if referenced in question" },
+                    smilesStrings: { 
+                      type: Type.ARRAY, 
+                      items: { type: Type.STRING },
+                      description: "Optional SMILES strings for chemical structures"
+                    },
                     options: {
                       type: Type.ARRAY,
                       items: {
